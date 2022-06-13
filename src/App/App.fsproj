@@ -9,8 +9,13 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
 
+<<<<<<< HEAD
    <ItemGroup>
     <ProjectReference Include="..\Lib\Parser\Parser.fsproj" />
+=======
+  <ItemGroup>
+    <ProjectReference Include="../Lib/Parser/Parser.fsproj" /> 
+>>>>>>> 80ad0366c4b8083f3164e638c217f5b8967a7aff
   </ItemGroup>
 
 </Project>

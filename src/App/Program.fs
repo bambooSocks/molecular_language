@@ -1,4 +1,4 @@
-﻿// For more information see https://aka.ms/fsharp-console-apps
+// For more information see https://aka.ms/fsharp-console-apps
 printfn "Hello from F#"
 
 let x = Parser.Parser.runParser "crn = {"
@@ -11,3 +11,8 @@ printf "%A" x
 // let t3 = Parser.Parser.parseE "   1- ((xjhde -   2) 
 //     - y)
 //     "
+
+open Parser.Parser
+let parseme = "1"
+
+printf "%A" (parse parseme)

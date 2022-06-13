@@ -35,6 +35,9 @@ module Types =
         | IfLT of TCommandList
         | IfLE of TCommandList
 
-    and TExpr = Expr of TSpecies * TSpecies list
+    and TExpr =
+        | SpExpr of TSpecies
+        | SpExpr_Seq of TSpecies * TExpr
+
     and TSpecies = Species of string
     and TNumber = Number of int
