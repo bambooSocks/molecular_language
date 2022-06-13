@@ -1,19 +1,19 @@
 namespace Parser
 
 module Types =
-    type TCrn = Crn of TRootList
+    //type TCrn = Crn of TRootList
 
-    and TRootList =
-        | Root of TRoot
-        | Root_Seq of TRoot * TRootList
+    type TRootList = RootList of TRoot list
+        // | Root of TRoot
+        // | Root_Seq of TRoot * TRootList
 
     and TRoot =
         | Conc of TSpecies * TNumber
-        | Step of TCommandList
+        | Step of TCommand list //TCommandList
 
-    and TCommandList =
-        | Command of TCommand
-        | Command_Seq of TCommand * TCommandList
+    // and TCommandList =
+    //     | Command of TCommand
+    //     | Command_Seq of TCommand * TCommandList
 
     and TCommand =
         | Module of TModule
@@ -29,15 +29,17 @@ module Types =
         | Cmp of TSpecies * TSpecies
 
     and TConditional =
-        | IfGT of TCommandList
-        | IfGE of TCommandList
-        | IfEQ of TCommandList
-        | IfLT of TCommandList
-        | IfLE of TCommandList
+        | IfGT of TCommand list
+        | IfGE of TCommand list
+        | IfEQ of TCommand list
+        | IfLT of TCommand list
+        | IfLE of TCommand list
 
-    and TExpr =
-        | SpExpr of TSpecies
-        | SpExpr_Seq of TSpecies * TExpr
+    // and TExpr =
+    //     | SpExpr of TSpecies
+    //     | SpExpr_Seq of TSpecies * TExpr
 
-    and TSpecies = Species of string
-    and TNumber = Number of int
+    and TSpecies = string
+    and TNumber = int
+    // and TSpecies = Species of string
+    // and TNumber = Number of int
