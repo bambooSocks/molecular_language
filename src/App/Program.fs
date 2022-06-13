@@ -1,2 +1,4 @@
-﻿// For more information see https://aka.ms/fsharp-console-apps
-printfn "Hello from F#"
+﻿open Parser.Parser
+let parseme = "1"
+
+printf "%A" (parse parseme)
