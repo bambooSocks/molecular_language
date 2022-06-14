@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Drawing\Drawing.fsproj" />
     <ProjectReference Include="..\Lib\Parser\Parser.fsproj" />
     <ProjectReference Include="..\Lib\ChemicalReactions\ChemicalReactions.fsproj" />
   </ItemGroup>
