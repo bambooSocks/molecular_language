@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lib\Parser\Parser.fsproj" />
+    <ProjectReference Include="..\Lib\ChemicalReactions\ChemicalReactions.fsproj" />
   </ItemGroup>
 
 </Project>
