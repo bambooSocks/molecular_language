@@ -9,7 +9,7 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
 
-   <ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Lib\Parser\Parser.fsproj" />
   </ItemGroup>
 
