@@ -18,7 +18,8 @@ module Types =
     and TCommand =
         | Module of TModule
         | Conditional of TConditional
-    //    | Rxn of TExpr * TExpr * TNumber
+        | Rxn of TSpecies list * TSpecies list * float
+
     and TModule =
         | Ld of TSpecies * TSpecies
         | Add of TSpecies * TSpecies * TSpecies

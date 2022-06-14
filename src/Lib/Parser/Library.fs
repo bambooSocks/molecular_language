@@ -39,6 +39,16 @@ module Parser =
                     helper2 "sqrt" Sqrt;
                     helper2 "cmp" Cmp]
 
+        let pExpr = sepBy1 (symbol "+") pSpecies
+
+        let pRxn =
+            parse { let! reactants = pExpr
+                    let! _ = symbol ","
+                    let! products = pExpr
+                    let! _ = symbol ","
+                    let! n = pfloat
+                    return Rxn (reactants, products, n) }
+
         // let rec pExpr =
         //     parse {
         //         let! s = pSpecies
@@ -95,3 +105,4 @@ module Parser =
                     return rootList}
         
         run (spaces >>. pCrnProgram) s
+
