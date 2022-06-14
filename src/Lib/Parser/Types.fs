@@ -43,3 +43,4 @@ module Types =
     and TNumber = int
     // and TSpecies = Species of string
     // and TNumber = Number of int
+    and State = Map<TSpecies, float>
