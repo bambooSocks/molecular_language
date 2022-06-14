@@ -20,6 +20,9 @@ module Types =
         | Conditional of TConditional
         | Rxn of TSpecies list * TSpecies list * float
 
+    // Should use this up here ^
+    //and TRxn = Rxn of TSpecies list * TSpecies list * float
+
     and TModule =
         | Ld of TSpecies * TSpecies
         | Add of TSpecies * TSpecies * TSpecies
