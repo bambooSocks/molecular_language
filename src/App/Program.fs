@@ -27,8 +27,8 @@ printfn "%A" res
 
 // ----------------------------------
 // Draw functions
-// draw: (function, sting) list -> min -> max ->
-draw [((fun x -> x*x), "first"); ((fun x -> x*x*x), "second")] 0.0 10.0
+// draw: (float list * string) list -> 
+draw [([1.0; 2.0; 3.0; 4.0; 5.0], "fisrt") ; ([4.0; 3.0; 2.0; 1.0], "second")]
 
 //Draw steps
 //drawSteps: (float list * string) list -> 

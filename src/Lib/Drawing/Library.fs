@@ -6,6 +6,7 @@ open Plotly.NET
 let drawPlot func = 
     Chart.combine func |> Chart.show
 
+    (*
 let draw funcs (min:float) (max:float) = 
     let makePlot list (func, name) = 
         let xs = seq{for i in min..max do yield i}
@@ -16,11 +17,20 @@ let draw funcs (min:float) (max:float) =
 
         plot :: list
     drawPlot (List.fold makePlot [] funcs)
+    *)
+
+let draw stepList = 
+    let makePlot list (steps, name) = 
+        let xs = seq{for i in 0.0 .. List.length steps do yield i}
+        let plot = Chart.Line(xs, steps, Name=name) 
+                    |> Chart.withLineStyle(Shape =StyleParam.Shape.Spline)
+        plot :: list
+    Chart.combine (List.fold makePlot [] stepList)|> Chart.show
 
 let drawSteps stepList = 
     let makePlot list (steps, name) = 
         let xs = seq{for i in 0.0 .. List.length steps do yield i}
-        let plot = Chart.Scatter(xs, steps, StyleParam.Mode.Lines_Markers,Name=name) 
+        let plot = Chart.Line(xs, steps, Name=name) 
                     |> Chart.withLineStyle(Shape =StyleParam.Shape.Hvh)
         plot :: list
     Chart.combine (List.fold makePlot [] stepList)|> Chart.show

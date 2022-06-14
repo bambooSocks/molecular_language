@@ -42,3 +42,26 @@ module Simulator =
             let state' = step crn state species dt
             yield step crn state species dt 
             yield! runSteps crn state' species dt }
+
+module modulesToReactions =
+    open Parser.Types
+
+    let toReaction acc (reaction: TCommand) = 
+        match reaction with
+        | Module(reac) -> 
+            match reac with
+            | Ld(x, y)      -> Rxn([x], [x;y], 1.0)     :: Rxn([y], [], 1.0)        :: acc
+            | Add(x, y, z)  -> Rxn([x], [x;z], 1.0)     :: Rxn([y], [y;z], 1.0)     :: Rxn([z], [], 1.0) :: acc
+            | Sub(x, y, z)  -> Rxn([x], [x;z], 1.0)     :: Rxn([y], [y;"H"], 1.0)   :: Rxn([z], [], 1.0) :: Rxn([z;"H"], [], 1.0) :: acc
+            | Mul(x, y, z)  -> Rxn([x;y], [x;y;z], 1.0) :: Rxn([z], [], 1.0)        :: acc
+            | Div(x, y, z)  -> Rxn([x], [x;z], 1.0)     :: Rxn([y;z], [y], 1.0)     :: acc
+            | Sqrt(x, y)    -> Rxn([x], [x;y], 1.0)     :: Rxn([y;y], [], 0.5)      :: acc
+            | _ -> acc
+        | _ -> acc
+
+    let toReactionNetwork list = 
+        let rec toReactionNetwork' acc elem = 
+            match elem with
+            | Step(modules) -> acc @ List.fold toReaction [] modules
+            | _ -> acc
+        List.fold toReactionNetwork' [] list
