@@ -13,7 +13,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Parser", "src\Lib\Parser\Pa
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests", "src\Tests\Tests.fsproj", "{4037735E-F4C9-4D37-9815-09A4606B8C47}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Drawing", "Drawing\Drawing.fsproj", "{4CC2257B-8063-4FA7-AA11-DD8D00AE3D1B}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Drawing", "src\Lib\Drawing\Drawing.fsproj", "{4CC2257B-8063-4FA7-AA11-DD8D00AE3D1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
