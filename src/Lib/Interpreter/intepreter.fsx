@@ -26,42 +26,56 @@ and TSpecies = string
 and TNumber = int
 and State = Map<TSpecies, float>;;
 
+(* you need to assume maybe that conc need to be defined before the other things*)
+(* they might have hard coded constants in the actual implementation in the paper*)
+
+(* Species cannot be called CMP*)
+
 let rec interpreter (state:State) =
     function
-    | [] -> state
+    | []       -> state
     | rootList -> List.fold root state rootList
 
 and root (state:State) =
     function
     | Conc(species,conc) -> state.Add(species,conc)
-    | Step commList -> List.fold command state commList
+    | Step commList      -> List.fold command state commList
 
 and command (state:State) =
     function
-    | Module md -> mdl state md
-    | Conditional cd -> cond state cd 
+    | Module md       -> mdl state md
+    | Conditional cd  -> cond state cd 
     | Rxn (xs1,xs2,n) -> state
 
 and mdl (state:State) =
+    let get x = Map.find x state
+    let bind x y = Map.add x y state
+
     function
-    | Ld(A,B) -> state.Add(B,state.Item A)
-    | Add(A,B,C) -> state.Add(C, (state.Item A) + (state.Item B))
-    | Sub(A,B,C) -> function
-                    | Sub(A,B,C) when ((state.Item A) > (state.Item B)) -> state.Add(C, (state.Item A) - (state.Item B))
-                    | _ -> state.Add(C, 0)
-    | Mul(A,B,C) -> state
-    | Div(A,B,C) -> state
-    | Sqrt(A,B) -> state
-    | Cmp(A,B) -> state
+    | Ld(A,B)    -> bind B (get A)
+    | Add(A,B,C) -> bind C ((get A) + (get B))
+    | Sub(A,B,C) -> match Sub(A,B,C) with
+                    | Sub(A,B,C) when ((get A) > (get B)) -> bind C ((get A) - (get B))
+                    | _                                   -> state.Add(C, 0)
+    | Mul(A,B,C) -> bind C ((get A) * (get B))
+    | Div(A,B,C) -> bind C ((get A) / (get B))
+    | Sqrt(A,B)  -> bind B (sqrt (get A))
+    | Cmp(A,B)   -> match Cmp(A,B) with 
+                    | _ when ((get A - get B) > 0.5)  -> bind "Cmp" 1
+                    | _ when ((get A - get B) < -0.5) -> bind "Cmp" -1
+                    | _                               -> bind "Cmp" 0
 
 and cond (state:State) = 
+    let fwd x = List.fold command state x
+    let flag = Map.find "Cmp" state
     function
-    | IfGT cmdList -> List.fold command state cmdList
-    | IfGE cmdList -> List.fold command state cmdList
-    | IfEQ cmdList -> List.fold command state cmdList
-    | IfLT cmdList -> List.fold command state cmdList
-    | IfLE cmdList -> List.fold command state cmdList
+    | IfGT cmdList when (flag = 1)                -> fwd cmdList
+    | IfGE cmdList when (flag = 1) || (flag = 0)  -> fwd cmdList
+    | IfEQ cmdList when (flag = 0)                -> fwd cmdList
+    | IfLT cmdList when (flag = -1) || (flag = 0) -> fwd cmdList
+    | IfLE cmdList when (flag = -1)               -> fwd cmdList
+    | _                                           -> state
 
 let ast1 = [Conc("a", 32); Conc("b", 12)];;
 
-printf "%A" (interpreter (Map.ofList [("a",0); ("b",0)]) ast1);;
+printf "%A" (interpreter (Map.ofList []) ast1);;

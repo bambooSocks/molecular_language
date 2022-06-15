@@ -4,8 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../Parser/Types.fs" />
-    <Compile Include="../Parser/Library.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
