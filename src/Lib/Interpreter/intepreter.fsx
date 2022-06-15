@@ -24,19 +24,23 @@ and TConditional =
     | IfLE of TCommand list
 and TSpecies = string
 and TNumber = int
-and State = Map<TSpecies, float>;;
+and State = Map<TSpecies, float>
+and Program = seq<State>;;
 
 (* you need to assume maybe that conc need to be defined before the other things*)
 (* they might have hard coded constants in the actual implementation in the paper*)
 
 (* Species cannot be called CMP*)
 
-let rec interpreter (state:State) =
+let rec interpreter state ast =
+    
+
+let rec interpreter' (state:State) =
     function
     | []       -> state
     | rootList -> List.fold root state rootList
 
-and root (state:State) =
+and root (state:State) =  // sequence starts here
     function
     | Conc(species,conc) -> state.Add(species,conc)
     | Step commList      -> List.fold command state commList
@@ -76,6 +80,19 @@ and cond (state:State) =
     | IfLE cmdList when (flag = -1)               -> fwd cmdList
     | _                                           -> state
 
+let rec interpreter state ast =  interpreter' state ast
+
 let ast1 = [Conc("a", 32); Conc("b", 12)];;
 
-printf "%A" (interpreter (Map.ofList []) ast1);;
+let ast2 = [Conc ("a", 32); Conc ("b", 12);
+ Step
+   [Module (Ld ("a", "atmp"));
+    Module (Ld ("b", "btmp"));
+    Module (Cmp ("a", "b"))];
+ Step
+   [Conditional (IfGT [Module (Sub ("atmp", "btmp", "a"))]);
+    Conditional (IfLT [Module (Sub ("btmp", "atmp", "b"))])]];;
+
+printf "%A" (interpreter (Map.ofList []) ast2);;
+
+// it should generate an infinite sequence of states in a lazy way
