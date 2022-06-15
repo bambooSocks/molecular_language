@@ -18,10 +18,7 @@ module Types =
     and TCommand =
         | Module of TModule
         | Conditional of TConditional
-        | Rxn of TSpecies list * TSpecies list * float
-
-    // Should use this up here ^
-    //and TRxn = Rxn of TSpecies list * TSpecies list * float
+        //| Rxn of TSpecies list * TSpecies list * float
 
     and TModule =
         | Ld of TSpecies * TSpecies
@@ -48,3 +45,5 @@ module Types =
     // and TSpecies = Species of string
     // and TNumber = Number of int
     and State = Map<TSpecies, float>
+
+type TRxn = Rxn of string list * string list * float
