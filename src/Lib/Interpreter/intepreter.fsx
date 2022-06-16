@@ -1,6 +1,8 @@
 #nowarn "40"
 type TRootList = RootList of TRoot list
-and TRoot = Step of TCommand list 
+and TRoot =
+    | Conc of TSpecies * TNumber
+    | Step of TCommand list 
 and TCommand =
     | Module of TModule
     | Conditional of TConditional
@@ -22,10 +24,8 @@ and TConditional =
 and TSpecies = string
 and TNumber = int
 and State = Map<TSpecies, float>
-and Program = seq<State>;;
-type TConc = Conc of TSpecies * TNumber
 
-let rec interpreter (state:State) =
+let rec rootL (state:State) =
     function
     | []  -> state 
     | rootList -> List.fold root state rootList
@@ -34,7 +34,7 @@ let rec interpreter (state:State) =
 
 and root (state:State) =  // sequence starts here
     function
-    //| Conc(species,conc) -> state.Add(species,conc)
+    | Conc(species,conc) -> state.Add(species,conc)
     | Step commList      -> List.fold command state commList
 
 and command (state:State) =
@@ -72,15 +72,15 @@ and cond (state:State) =
     | IfLE cmdList when (flag = -1)               -> fwd cmdList
     | _                                           -> state
 
-let rec simulate (state:State) rootL =
+let rec interpret (state:State) rtList =
     seq {
-        let state' = interpreter state rootL
+        let state' = rootL state rtList
         yield state'
-        yield! simulate state' rootL }
+        yield! interpret state' rtList }
 
 //let ast1 = [Conc("a", 32); Conc("b", 12)];;
 
-let ast2 = [
+let ast2 = [Conc("a", 32); Conc("b", 12);
  Step
    [Module (Ld ("a", "atmp"));
     Module (Ld ("b", "btmp"));
@@ -89,4 +89,4 @@ let ast2 = [
    [Conditional (IfGT [Module (Sub ("atmp", "btmp", "a"))]);
     Conditional (IfLT [Module (Sub ("btmp", "atmp", "b"))])]];;
 
-printf "%A" ( (simulate (Map.ofList [("Cmp", 1.0); ("a", 20.0); ("atmp", 32.0); ("b", 12.0); ("btmp", 12.0)]) ast2) );;
+printf "%A" (interpret (Map.ofList [("Cmp", 1.0); ("a", 20.0); ("atmp", 32.0); ("b", 12.0); ("btmp", 12.0)]) ast2);;
