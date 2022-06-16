@@ -1,9 +1,6 @@
 #nowarn "40"
-
 type TRootList = RootList of TRoot list
-and TRoot =
-    | Conc of TSpecies * TNumber
-    | Step of TCommand list 
+and TRoot = Step of TCommand list 
 and TCommand =
     | Module of TModule
     | Conditional of TConditional
@@ -26,23 +23,18 @@ and TSpecies = string
 and TNumber = int
 and State = Map<TSpecies, float>
 and Program = seq<State>;;
+type TConc = Conc of TSpecies * TNumber
 
-(* you need to assume maybe that conc need to be defined before the other things*)
-(* they might have hard coded constants in the actual implementation in the paper*)
-
-(* Species cannot be called CMP*)
-
-let rec interpreter state ast =
-    
-
-let rec interpreter' (state:State) =
+let rec interpreter (state:State) =
     function
-    | []       -> state
+    | []  -> state 
     | rootList -> List.fold root state rootList
+
+// build an infinite sequence that takes an input a state, and folds it over the whole 
 
 and root (state:State) =  // sequence starts here
     function
-    | Conc(species,conc) -> state.Add(species,conc)
+    //| Conc(species,conc) -> state.Add(species,conc)
     | Step commList      -> List.fold command state commList
 
 and command (state:State) =
@@ -80,11 +72,15 @@ and cond (state:State) =
     | IfLE cmdList when (flag = -1)               -> fwd cmdList
     | _                                           -> state
 
-let rec interpreter state ast =  interpreter' state ast
+let rec simulate (state:State) rootL =
+    seq {
+        let state' = interpreter state rootL
+        yield state'
+        yield! simulate state' rootL }
 
-let ast1 = [Conc("a", 32); Conc("b", 12)];;
+//let ast1 = [Conc("a", 32); Conc("b", 12)];;
 
-let ast2 = [Conc ("a", 32); Conc ("b", 12);
+let ast2 = [
  Step
    [Module (Ld ("a", "atmp"));
     Module (Ld ("b", "btmp"));
@@ -93,6 +89,4 @@ let ast2 = [Conc ("a", 32); Conc ("b", 12);
    [Conditional (IfGT [Module (Sub ("atmp", "btmp", "a"))]);
     Conditional (IfLT [Module (Sub ("btmp", "atmp", "b"))])]];;
 
-printf "%A" (interpreter (Map.ofList []) ast2);;
-
-// it should generate an infinite sequence of states in a lazy way
+printf "%A" ( (simulate (Map.ofList [("Cmp", 1.0); ("a", 20.0); ("atmp", 32.0); ("b", 12.0); ("btmp", 12.0)]) ast2) );;
