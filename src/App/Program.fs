@@ -1,34 +1,40 @@
-open Parser.Parser
+﻿open Parser.Parser
 
 open Drawing
+open TypeCheck.TypeCheck
+open App.Examples
 
-// Sample CRN programs
-let gcd = """
-crn = {
-conc[a,32],
-conc[b,12],
-step[{
-    ld [a, atmp],
-    ld [b, btmp],
-    cmp[a,b]
-}],
-step[{
-    ifGT[{ sub[atmp,btmp,a] }],
-    ifLT[{ sub[btmp,atmp,b] }]
-}]
-};
-"""
-let small = "crn = { conc[a, 32], conc[b, 12] };"
-let small2 = "crn = { conc[a, 32], conc[b, 12], step[{ ifGT[{ sub[atmp,btmp,a] }] }] };"
+let parseCheckExecute src =
+    let parserResult = runCrnParser src
+    match parserResult with
+    | FParsec.CharParsers.ParserResult.Success (ast, _, _) ->
+        let checkResult = check ast
+        printfn "Parsing succeeded. AST:\n%A" ast
+        match snd checkResult with
+        | [] -> printfn "No errors, yay! *Interpret*"
+        | errs -> printErrors errs
+    | FParsec.CharParsers.ParserResult.Failure (err, _, _) -> printfn "PARSING FAILED:\n%s" err
 
 // Parse a CRN program
-let res = runCrnParser gcd
-let innerres =
-    match res with
-    | FParsec.CharParsers.ParserResult.Success (r, _, _) -> "yay"
-    | FParsec.CharParsers.ParserResult.Failure (s, _, _) -> "nay"
-printfn "%A" res
-printfn "%A" innerres
+parseCheckExecute gcd
+
+// let innerres =
+//     match res with
+//     | FParsec.CharParsers.ParserResult.Success (r, _, _) -> "yay"
+//     | FParsec.CharParsers.ParserResult.Failure (s, _, _) -> "nay"
+// printfn "%A" res
+// printfn "%A" innerres
+
+// let innerres =
+//     function
+//     | FParsec.CharParsers.ParserResult.Success (r, _, _) -> Some r
+//     | FParsec.CharParsers.ParserResult.Failure _ -> None
+
+// let ast = (innerres res).Value
+
+// let ch = check ast
+
+// printErrors (snd ch)
 
 // ----------------------------------
 // Draw functions
