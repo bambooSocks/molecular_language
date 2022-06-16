@@ -1,5 +1,5 @@
-﻿open Parser.Parser
-
+open Parser.Parser
+open Interpreter.Interpreter
 open Drawing
 open TypeCheck.TypeCheck
 open App.Examples
@@ -17,8 +17,10 @@ let innerres =
 
 let ast = (innerres res).Value
 
-let ch = check ast
+// Interpret a CRN program
+printf "%A" (interpret (Map.ofList []) ast) 
 
+let ch = check ast
 printErrors (snd ch)
 
 let network = toReactionNetwork ast
