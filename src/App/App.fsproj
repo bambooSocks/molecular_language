@@ -5,7 +5,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Examples.fs" />
+    <Compile Include="..\Lib\ChemicalReactions\Library.fs" />
     <Compile Include="Program.fs" />
+    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lib\Drawing\Drawing.fsproj" />

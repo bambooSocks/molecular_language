@@ -3,6 +3,8 @@
 open Drawing
 open TypeCheck.TypeCheck
 open App.Examples
+open ChemicalReactions.modulesToReactions
+
 
 // Parse a CRN program
 let res = runCrnParser gcd
@@ -18,6 +20,9 @@ let ast = (innerres res).Value
 let ch = check ast
 
 printErrors (snd ch)
+
+let network = toReactionNetwork ast
+printf "\n\n%A" network
 
 // ----------------------------------
 // Draw functions
