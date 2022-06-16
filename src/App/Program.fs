@@ -1,5 +1,5 @@
 ﻿open Parser.Parser
-
+open Interpreter.Interpreter
 open Drawing
 open TypeCheck.TypeCheck
 open App.Examples
@@ -11,30 +11,15 @@ let parseCheckExecute src =
         let checkResult = check ast
         printfn "Parsing succeeded. AST:\n%A" ast
         match snd checkResult with
-        | [] -> printfn "No errors, yay! *Interpret*"
+        | [] ->
+            printfn "No errors, yay!"
+            let resultingStates = interpret (Map.ofList []) ast
+            printfn "Resulting sequence of states:\n%A" resultingStates
         | errs -> printErrors errs
     | FParsec.CharParsers.ParserResult.Failure (err, _, _) -> printfn "PARSING FAILED:\n%s" err
 
 // Parse a CRN program
 parseCheckExecute gcd
-
-// let innerres =
-//     match res with
-//     | FParsec.CharParsers.ParserResult.Success (r, _, _) -> "yay"
-//     | FParsec.CharParsers.ParserResult.Failure (s, _, _) -> "nay"
-// printfn "%A" res
-// printfn "%A" innerres
-
-// let innerres =
-//     function
-//     | FParsec.CharParsers.ParserResult.Success (r, _, _) -> Some r
-//     | FParsec.CharParsers.ParserResult.Failure _ -> None
-
-// let ast = (innerres res).Value
-
-// let ch = check ast
-
-// printErrors (snd ch)
 
 // ----------------------------------
 // Draw functions
