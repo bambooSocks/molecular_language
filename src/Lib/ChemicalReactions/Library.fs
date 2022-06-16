@@ -5,7 +5,7 @@ open Parser.Types
 type TRxn = Rxn of string list * string list * float
 
 module Simulator = 
-    let s0 = 
+    //let s0 = 
 
     let sum = List.fold (+) 0
     let product = List.fold (*) 1.0

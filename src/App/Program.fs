@@ -1,5 +1,5 @@
 open Parser.Parser
-
+open Interpreter.Interpreter
 open Drawing
 
 // Sample CRN programs
@@ -24,6 +24,14 @@ let small2 = "crn = { conc[a, 32], conc[b, 12], step[{ ifGT[{ sub[atmp,btmp,a] }
 // Parse a CRN program
 let res = runCrnParser gcd
 printf "%A" res
+
+// Interpret a CRN program
+let innerresult = 
+    match res with 
+    | FParsec.CharParsers.ParserResult.Success (result,_,_) -> result
+    | FParsec.CharParsers.ParserResult.Failure (_,_,_) -> failwith "parsing failed"
+
+printf "%A" (interpret (Map.ofList []) innerresult) 
 
 // Draw functions
 // draw: (function, sting) list -> min -> max ->
