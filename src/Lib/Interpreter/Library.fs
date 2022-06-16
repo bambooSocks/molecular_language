@@ -16,7 +16,6 @@ module Interpreter =
         match program with
         | Module md       -> mdl state md
         | Conditional cd  -> cond state cd 
-        | Rxn (xs1,xs2,n) -> state
 
     and mdl (state:State) (program:TModule) =
         let get x = Map.find x state
