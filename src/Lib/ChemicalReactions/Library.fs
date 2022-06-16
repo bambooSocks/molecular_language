@@ -1,6 +1,6 @@
 ﻿namespace ChemicalReactions
 
-type TRxn = Rxn of string list * string list * float
+open Parser.Types
 
 module Simulator = 
     let product = List.fold (*) 1.0
