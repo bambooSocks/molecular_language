@@ -20,11 +20,27 @@ let parseCheckExecute src =
         | errs -> printErrors errs
     | FParsec.CharParsers.ParserResult.Failure (err, _, _) -> printfn "PARSING FAILED:\n%s" err
 
+let speciesConcs species states = List.map (Map.find species) states
+let drawStates res =
+    drawSteps (List.map (fun s -> (speciesConcs s res, s)) (Seq.toList <| Map.keys res[0]))
+
+
 // Parse a CRN program
 parseCheckExecute gcd
 
-let network = toReactionNetwork ast
+let initial = Map.ofList [("a", 80.0); ("b", 20.0); ("agtb", 0.8); ("altb", 0.2); ("atmp", 0.0); ("btmp", 0.0); ("H", 0.0)]
+
+let temp = match runCrnParser gcd with
+            | FParsec.CharParsers.ParserResult.Success (ast, _, _) -> ast
+           
+let network = toReactionNetwork temp
 printf "\n\n%A" network
+
+open ChemicalReactions.Simulator
+let sim = simulateN network initial 0.01 2000
+
+drawStates sim
+
 
 // ----------------------------------
 // Draw functions

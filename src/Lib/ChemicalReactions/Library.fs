@@ -110,6 +110,7 @@ module modulesToReactions =
                                    @ [Rxn([y; x + "lt" + y], [x + "lt" + y; x + "lt" + y], 1.0)]
                                    @ [Rxn([x + "lt" + y; x + "gt" + y], [x + "gt" + y; y], 1.0)]
                                    @ [Rxn([y; x + "gt" + y], [x + "gt" + y; x + "gt" + y], 1.0)]
+
         | Conditional(reac) -> match reac with
                                 | IfGT(command) -> acc @ List.fold toReaction [] command
                                 | IfGE(command) -> acc @ List.fold toReaction [] command
@@ -120,7 +121,7 @@ module modulesToReactions =
 
     let toReactionNetwork' acc elem = 
             match elem with
-            | Step(modules) -> acc @ [List.fold toReaction [] modules]
+            | Step(modules) -> acc @ List.fold toReaction [] modules
             | _ -> acc
         
     let toReactionNetwork (list: Parser.Types.TRoot list) = List.fold toReactionNetwork' [] list
