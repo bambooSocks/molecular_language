@@ -3,44 +3,94 @@
 open Parser.Types
 
 module Simulator = 
-
-    let s0 = Map.ofList [("a", 6.0); ("b", 2.0); ("c", 0.0)]
-
-    let sum = List.fold (+) 0
     let product = List.fold (*) 1.0
 
-    let stateGet state species = Map.find species state
-    let stateAddConc state species  dConc =
-        let oldConc = stateGet state species
-        Map.add species (oldConc + dConc) state
+    let stateGet s st = Map.find s st
+    let stateAddConc s dc st =
+        let c = stateGet s st
+        Map.add s (c + dc) st
 
-    let multiplicity species expr = List.length (List.filter (fun x -> x = species) expr)
+    let multiplicity s ss = List.length (List.filter (fun x -> x = s) ss)
 
-    let speciesNetChange species (Rxn (reactants, products, _)) = 
-        multiplicity species products - multiplicity species reactants
+    let speciesNetChange s (Rxn (rs, ps, _)) = 
+        multiplicity s ps - multiplicity s rs
 
-    let concNetChange crn state species dt =
-        let calcTerm (rxn as Rxn (reactants, _, rate)) =
-            let sNetChange = float (speciesNetChange species rxn)
-            let multiplicityProduct = product (List.map (fun s -> pown (stateGet state s) (multiplicity s reactants)) reactants)
+    let concNetChange crn st s dt =
+        let calcTerm (rxn as Rxn (rs, _, rate)) =
+            let sNetChange = float (speciesNetChange s rxn)
+            let multiplicityProduct = product (List.map (fun s -> pown (stateGet s st) (multiplicity s rs)) rs)
             rate * sNetChange * multiplicityProduct * dt
         List.sum (List.map calcTerm crn)
 
-    let step crn state species dt =
-        let netChange = concNetChange crn state species dt
-        stateAddConc state species netChange
+    let step crn st ss dt =
+        let netChanges = List.map (fun s -> (s, concNetChange crn st s dt)) ss
+        List.fold (fun st' (s, netChange) -> stateAddConc s netChange st') st netChanges
 
-    let rec runNSteps crn state species dt = function
-        | 0 -> state
-        | n ->
-            let nextState = step crn state species dt
-            runNSteps crn nextState species dt (n-1)
+    let crnSpecies crn = List.fold (fun acc (Rxn(ps, rs, _)) -> Set.union acc (Set.ofList (ps @ rs))) Set.empty crn 
 
-    let rec runSteps crn state species dt =
+    let rec simulate crn st ss dt =
         seq {
-            let state' = step crn state species dt
-            yield step crn state species dt 
-            yield! runSteps crn state' species dt }
+            let st' = step crn st ss dt
+            yield st'
+            yield! simulate crn st' ss dt }
+
+    let simulateN crn st dt n =
+        let ss = Set.toList (crnSpecies crn)
+        simulate crn st ss dt |> Seq.take n |> Seq.toList
+
+module Samples =
+    let crn1s0 = Map.ofList [("a", 6.0); ("b", 2.0); ("c", 0.0)]
+    let crn1 =
+        let rxn1 = Rxn (["a"; "b"], ["a"; "b"; "c"], 1)
+        let rxn2 = Rxn (["c"], [], 1)
+        [rxn1; rxn2]
+
+    let crn9s0 = Map.ofList [("a", 1.0); ("b", 1.0); ("c", 0.000001)]
+    let crn9 =
+        let rxn1a = Rxn (["a"; "b"], ["b"; "b"], 1)
+        let rxn1b = Rxn (["b"; "c"], ["c"; "c"], 1)
+        let rxn2 = Rxn (["c"; "a"], ["a"; "a"], 1)
+        [rxn1a; rxn1b; rxn2]
+
+    let ldcrns0 = Map.ofList [("a", 7.0); ("b", 2.0)]
+    let ldcrn =
+        let rxn1 = Rxn (["a"], ["a"; "b"], 1)
+        let rxn2 = Rxn (["b"], [], 1)
+        [rxn1; rxn2]
+
+    let addcrns0 = Map.ofList [("a", 2.0); ("b", 3.0); ("c", 0.0)]
+    let addcrn =
+        let rxn1 = Rxn (["a"], ["a"; "c"], 1)
+        let rxn2 = Rxn (["b"], ["b"; "c"], 1)
+        let rxn3 = Rxn (["c"], [], 1)
+        [rxn1; rxn2; rxn3]
+
+    let subcrns0 = Map.ofList [("a", 5.0); ("b", 3.0); ("c", 0.0); ("h", 0.0)]
+    let subcrn =
+        let rxn1 = Rxn (["a"], ["a"; "c"], 1)
+        let rxn2 = Rxn (["b"], ["b"; "h"], 1)
+        let rxn3 = Rxn (["c"], [], 1)
+        let rxn4 = Rxn (["c"; "h"], [], 1)
+        [rxn1; rxn2; rxn3; rxn4]
+
+    let divcrns0 = Map.ofList [("a", 7.0); ("b", 3.0); ("c", 0.0)]
+    let divcrn =
+        let rxn1 = Rxn (["a"], ["a"; "c"], 1)
+        let rxn2 = Rxn (["b"; "c"], ["b"], 1)
+        [rxn1; rxn2]
+
+    let sqrtcrns0 = Map.ofList [("a", 4.0); ("b", 0.01)]
+    let sqrtcrn =
+        let rxn1 = Rxn (["a"], ["a"; "b"], 1)
+        let rxn2 = Rxn (["b"; "b"], [], 0.5)
+        [rxn1; rxn2]
+
+    let crn7s0 = Map.ofList [("a", 80.0); ("b", 20.0); ("aGTb", 0.5); ("aLTb", 0.5)]
+    let crn7 =
+        let rxn1 = Rxn (["aGTb"; "b"], ["aLTb"; "b"], 1)
+        let rxn2 = Rxn (["aLTb"; "a"], ["aGTb"; "a"], 1)
+        [rxn1; rxn2]
+
 
 module modulesToReactions =
 

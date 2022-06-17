@@ -5,9 +5,27 @@ open FParsec
 open Types
 
 module Parser =
+    let token p = p .>> spaces
+    let symbol s = token (pstring s)
+    let pInteger: Parser<int, unit> = token pint32
+
+    let runRxnParser s = 
+        let pSpecies: Parser<string, unit> = token (many1SatisfyL isLetter "species")
+        let pExpr = sepBy pSpecies (symbol "+")
+        let pRxn =
+            parse { let! _ = symbol "rxn"
+                    let! _ = symbol "["
+                    let! reactants = pExpr
+                    let! _ = symbol ","
+                    let! products = pExpr
+                    let! _ = symbol ","
+                    let! n = pfloat
+                    let! _ = symbol "]"
+                    return Rxn (reactants, products, n) }
+        let pRxns = sepBy1 pRxn  (symbol ",") 
+        run pRxns s
+
     let runCrnParser s =
-        let token p = p .>> spaces
-        let symbol s = token (pstring s)
         let pInteger: Parser<int, unit> = token pint32
 
         let pSpecies: Parser<string, unit> = token (many1SatisfyL isLetter "species")
@@ -44,28 +62,6 @@ module Parser =
                      helper3 "div" Div
                      helper2 "sqrt" Sqrt
                      helper2 "cmp" Cmp ]
-
-        let pExpr = sepBy1 (symbol "+") pSpecies
-
-        // let pRxn =
-        //     parse { let! reactants = pExpr
-        //             let! _ = symbol ","
-        //             let! products = pExpr
-        //             let! _ = symbol ","
-        //             let! n = pfloat
-        //             return Rxn (reactants, products, n) }
-
-        // let rec pExpr =
-        //     parse {
-        //         let! s = pSpecies
-        //         let! _ = symbol "+"
-        //         let! e = pExpr
-        //         return s :: e
-        //     }
-        //     <|> parse {
-        //         let! s = pSpecies
-        //         return [ s ]
-        //     }
 
         let rec parseRootList = sepBy1 parseRoot (symbol ",")
 
