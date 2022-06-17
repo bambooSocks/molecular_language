@@ -7,13 +7,6 @@ namespace ChemicalReactions
 open Parser.Types
 
 module Simulator = 
-<<<<<<< HEAD
-=======
-
-    let s0 = Map.ofList [("a", 6.0); ("b", 2.0); ("c", 0.0)]
-
-    let sum = List.fold (+) 0
->>>>>>> c443e34 (Added Cmp as in CRN 7 and Crn 8)
     let product = List.fold (*) 1.0
 
     let stateGet s st = Map.find s st
