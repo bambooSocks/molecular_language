@@ -109,7 +109,7 @@ module modulesToReactions =
             | Div(x, y, z)  -> acc @ [Rxn([x], [x;z], 1.0)] @ [Rxn([y;z], [y], 1.0)]  
             | Sqrt(x, y)    -> acc @ [Rxn([x], [x;y], 1.0)] @ [Rxn([y;y], [], 0.5)]  
             | Cmp(x, y)     -> acc @ [Rxn([x + "gt" + y; y], [x + "lt" + y; y], 1.0)]
-                                   @ [Rxn([x + "lt" + y; x], [x+ "gt" + y; x], 1.0)]
+                                   @ [Rxn([x + "lt" + y; x], [x + "gt" + y; x], 1.0)]
                                    @ [Rxn([x + "gt" + y;x + "lt" + y], [x + "lt" + y; y], 1.0)]
                                    @ [Rxn([y; x + "lt" + y], [x + "lt" + y; x + "lt" + y], 1.0)]
                                    @ [Rxn([x + "lt" + y; x + "gt" + y], [x + "gt" + y; y], 1.0)]
