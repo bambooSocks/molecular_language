@@ -28,7 +28,7 @@ let drawStates res =
 // Parse a CRN program
 parseCheckExecute gcd
 
-let initial = Map.ofList [("a", 80.0); ("b", 20.0); ("agtb", 0.8); ("altb", 0.2); ("atmp", 0.0); ("btmp", 0.0); ("H", 0.0)]
+let initial = Map.ofList [("a", 80.0); ("b", 20.0); ("agtb", 0.5); ("altb", 0.5); ("atmp", 0.0); ("btmp", 0.0); ("H", 0.0)]
 
 let temp = match runCrnParser gcd with
             | FParsec.CharParsers.ParserResult.Success (ast, _, _) -> ast
