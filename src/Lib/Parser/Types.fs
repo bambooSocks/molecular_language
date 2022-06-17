@@ -5,8 +5,11 @@ module Types =
     type TRootList = RootList of TRoot list
 
     and TRoot =
-        | Conc of TSpecies * TNumber
-        | Step of TCommand list
+        | Conc of TConc
+        | Step of TStep
+
+    and TConc = TSpecies * TNumber
+    and TStep = TCommand list
 
     and TCommand =
         | Module of TModule
