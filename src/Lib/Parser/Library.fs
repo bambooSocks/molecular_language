@@ -9,27 +9,33 @@ module Parser =
     let symbol s = token (pstring s)
     let pInteger: Parser<int, unit> = token pint32
 
-    let runRxnParser s = 
+    let runRxnParser s =
         let pSpecies: Parser<string, unit> = token (many1SatisfyL isLetter "species")
         let pExpr = sepBy pSpecies (symbol "+")
+
         let pRxn =
-            parse { let! _ = symbol "rxn"
-                    let! _ = symbol "["
-                    let! reactants = pExpr
-                    let! _ = symbol ","
-                    let! products = pExpr
-                    let! _ = symbol ","
-                    let! n = pfloat
-                    let! _ = symbol "]"
-                    return Rxn (reactants, products, n) }
-        let pRxns = sepBy1 pRxn  (symbol ",") 
+            parse {
+                let! _ = symbol "rxn"
+                let! _ = symbol "["
+                let! reactants = pExpr
+                let! _ = symbol ","
+                let! products = pExpr
+                let! _ = symbol ","
+                let! n = pfloat
+                let! _ = symbol "]"
+                return Rxn(reactants, products, n)
+            }
+
+        let pRxns = sepBy1 pRxn (symbol ",")
         run pRxns s
 
     let runCrnParser s =
         let pInteger: Parser<int, unit> = token pint32
 
         let isLetterOrDigit x = isLetter x || isDigit x
-        let pSpecies: Parser<string, unit> = token (many1Satisfy2L isLetter isLetterOrDigit "species")
+
+        let pSpecies: Parser<string, unit> =
+            token (many1Satisfy2L isLetter isLetterOrDigit "species")
 
         let pModule =
             let helper2 modName constr =
@@ -122,6 +128,7 @@ module Parser =
 
         run (spaces >>. pCrnProgram) s
 
-    let getParserResult = function
+    let getParserResult =
+        function
         | Success (r, _, _) -> Some r
         | Failure _ -> None
