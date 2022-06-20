@@ -22,7 +22,7 @@ let parseCheckExecute src =
     | Failure (err, _, _) -> printfn "PARSING FAILED:\n%s" err
 
 // Parse a CRN program
-parseCheckExecute gcd
+parseCheckExecute gcd 
 
 // ----------------------------------
 // Draw functions
