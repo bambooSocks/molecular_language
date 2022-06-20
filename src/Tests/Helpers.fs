@@ -5,6 +5,14 @@ open Parser.Types
 module Helpers =
     let mulitpleToStr fn xs = List.map fn xs |> String.concat ","
 
+    let exprToString (e: TSpecies list) = String.concat "+" e
+
+    let rxnToString (Rxn (e1, e2, s)) =
+        sprintf "rxn[%s,%s,%f]" (exprToString e1) (exprToString e2) s
+
+    let rxnsToString rxns =
+        List.map rxnToString rxns |> String.concat ","
+
     let rec rootListToString rs =
         sprintf "crn={%s}" (mulitpleToStr rootToString rs)
 
