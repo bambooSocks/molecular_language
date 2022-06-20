@@ -1,12 +1,13 @@
 namespace Parser
 
 module Types =
+    type TRoot =
+        | Conc of TConc
+        | Step of TStep
 
-    type TRootList = RootList of TRoot list
-
-    and TRoot =
-        | Conc of TSpecies * TNumber
-        | Step of TCommand list
+    and TConc = TSpecies * TNumber
+    
+    and TStep = TCommand list
 
     and TCommand =
         | Module of TModule

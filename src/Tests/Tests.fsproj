@@ -1,18 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="Helpers.fs" />
     <Compile Include="CustomGenerator.fs" />
-    <Compile Include="Program.fs" />
+    <Compile Include="PropertyTests.fs" />
+    <Compile Include="TypeCheckTests.fs" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Lib\Parser\Parser.fsproj" />
-    <ProjectReference Include="..\Lib\Interpreter\Interpreter.fsproj" />
+    <ProjectReference Include="..\Lib\TypeCheck\TypeCheck.fsproj" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="FsCheck" Version="2.16.5" />
+    <PackageReference Include="FsCheck.NUnit" Version="2.16.5" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
   </ItemGroup>
 </Project>

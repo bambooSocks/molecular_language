@@ -122,8 +122,12 @@ module Examples =
                 div[four, divisor1, factor1],
                 add[divisor1, four, divisor1Next],
                 div[four, divisor2, factor2],
-                add[divisor2, four, divisor2Next],
-                sub[factor1, factor2, factor],
+                add[divisor2, four, divisor2Next]
+            }],
+            step[{
+                sub[factor1, factor2, factor]
+            }],
+            step[{
                 add[pi, factor, piNext]
             }],
             step [{

@@ -8,7 +8,11 @@ module TypeCheck =
     // Check functions for type checking
     let rec check rs =
         let notCmpMissing = checkMissingCmp rs
-        combineResults notCmpMissing (checkMultiple checkRoot rs)
+        let concStepNotWrongOrder = checkConcStepOrder rs
+
+        checkMultiple checkRoot rs
+        |> combineResults notCmpMissing
+        |> combineResults concStepNotWrongOrder
 
     and checkRoot =
         function
