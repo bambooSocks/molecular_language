@@ -117,3 +117,7 @@ module Parser =
             }
 
         run (spaces >>. pCrnProgram) s
+
+    let getParserResult = function
+        | Success (r, _, _) -> Some r
+        | Failure _ -> None

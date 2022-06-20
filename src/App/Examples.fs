@@ -22,8 +22,8 @@ module Examples =
     let discrete_counter =
         """
         crn = {
-            conc[c,c0], conc[ cInitial ,c0],
-            conc[one,1], conc[zero,0],
+            conc[c, 3], conc[ cInitial, 3],
+            conc[one, 1], conc[zero, 0],
             step [{
                 sub[c,one,cnext ],
                 cmp[c,zero ]
