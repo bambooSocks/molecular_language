@@ -35,3 +35,12 @@ module Helpers =
         | IfEQ cmds -> sprintf "ifEQ[{%s}]" (mulitpleToStr commandToString cmds)
         | IfLT cmds -> sprintf "ifLT[{%s}]" (mulitpleToStr commandToString cmds)
         | IfLE cmds -> sprintf "ifLE[{%s}]" (mulitpleToStr commandToString cmds)
+
+
+
+    let mapCmp (a: State) (b: State) = Map.fold (fun acc key aval -> match Map.tryFind key b with 
+                                                                            | Some bval when bval = aval -> true
+                                                                            | _ -> false
+                                                                            ) true a
+
+    let pairwiseCmp seq1 seq2 =  Seq.fold2 (fun acc a b -> mapCmp a b) true seq1 seq2

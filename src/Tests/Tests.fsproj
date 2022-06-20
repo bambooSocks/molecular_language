@@ -8,11 +8,13 @@
     <Compile Include="CustomGenerator.fs" />
     <Compile Include="PropertyTests.fs" />
     <Compile Include="TypeCheckTests.fs" />
+    <Compile Include="..\lib\Interpreter\Library.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Lib\Parser\Parser.fsproj" />
     <ProjectReference Include="..\Lib\TypeCheck\TypeCheck.fsproj" />
+    <ProjectReference Include="..\Lib\Interpreter\Interpreter.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
