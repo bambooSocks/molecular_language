@@ -21,7 +21,7 @@ module PropertyTests =
             ()
 
         [<Property>]
-        member _.parserProperty ast =
+        member _.crnParserProperty ast =
             let generated = rootListToString ast
             let parsed = getParserResult (runCrnParser generated)
 
@@ -29,12 +29,20 @@ module PropertyTests =
                 ast = parsed.Value
             else
                 false
+
+        [<Property>]
+        member _.rxnParserProperty(rxns: TRxn list) =
+            let generated = rxnsToString rxns
+            let parsed = getParserResult (runRxnParser generated)
+
+            if parsed.IsSome then
+                rxns = parsed.Value
+            else
+                false
+
         [<Property>]
         member _.interpretationCompilationProperty initial rootList = //TODO extract initial state from rootList & figure out how to actually run this
             let interpreted = interpret initial rootList
             let compiled = interpret initial rootList
-            // let compiled = states computed from the reaction network compiled by the compiler. 
+            // let compiled = states computed from the reaction network compiled by the compiler.
             pairwiseCmp interpreted compiled
-
-
-
