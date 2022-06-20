@@ -46,7 +46,7 @@ module Interpreter =
         | IfLE cmdList when (flag = -1)               -> fwd cmdList
         | _                                           -> state
 
-    let rec interpret (state:State) rtList =
+    let rec interpret (state:State) rtList = //initial state and rootList
         seq {
             let state' = rootL state rtList
             yield state'

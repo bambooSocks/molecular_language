@@ -10,6 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lib\Parser\Parser.fsproj" />
+    <ProjectReference Include="..\Lib\Interpreter\Interpreter.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FsCheck" Version="2.16.5" />
