@@ -9,7 +9,12 @@ open Parser.Types
 module Simulator = 
     let product = List.fold (*) 1.0
 
-    let stateGet s st = Map.find s st
+    let stateGet s st =
+        if Map.containsKey s st
+        then Map.find s st
+        else printfn "%A" s
+             Map.find s st
+
     let stateAddConc s dc st =
         let c = stateGet s st
         Map.add s (c + dc) st
@@ -34,8 +39,8 @@ module Simulator =
 
     let rec simulate crn st ss dt =
         seq {
+            yield st
             let st' = step crn st ss dt
-            yield st'
             yield! simulate crn st' ss dt }
 
     let simulateN crn st dt n =
@@ -55,6 +60,16 @@ module Samples =
         let rxn1b = Rxn (["b"; "c"], ["c"; "c"], 1)
         let rxn2 = Rxn (["c"; "a"], ["a"; "a"], 1)
         [rxn1a; rxn1b; rxn2]
+
+    let genOscCrn x n =
+        let iToRxn i =
+            let xi = x + string i
+            let xi' = x + string (i % n + 1)
+            Rxn ([xi; xi'], [xi'; xi'], 1)
+        List.map iToRxn [1..n]
+
+    let addOscs crn x = List.map (fun (Rxn (rs, ps, k)) -> Rxn (x :: rs, x :: ps, k)) crn
+
 
     let ldcrns0 = Map.ofList [("a", 7.0); ("b", 2.0)]
     let ldcrn =
@@ -89,11 +104,18 @@ module Samples =
         let rxn2 = Rxn (["b"; "b"], [], 0.5)
         [rxn1; rxn2]
 
-    let crn7s0 = Map.ofList [("a", 80.0); ("b", 20.0); ("aGTb", 0.5); ("aLTb", 0.5)]
+    let crn7s0 = Map.ofList [("x", 80.0); ("y", 20.0); ("xGTy", 1.0); ("xLTy", 0.0)]
     let crn7 =
-        let rxn1 = Rxn (["aGTb"; "b"], ["aLTb"; "b"], 1)
-        let rxn2 = Rxn (["aLTb"; "a"], ["aGTb"; "a"], 1)
+        let rxn1 = Rxn (["xGTy"; "y"], ["xLTy"; "y"], 1)
+        let rxn2 = Rxn (["xLTy"; "x"], ["xGTy"; "x"], 1)
         [rxn1; rxn2]
+
+    let crn8 =
+        let rxn1 = Rxn (["xGTy"; "xLTy"], ["xLTy"; "b"], 1)
+        let rxn2 = Rxn (["b"; "xLTy"], ["xLTy"; "xLTy"], 1)
+        let rxn3 = Rxn (["xLTy"; "xGTy"], ["xGTy"; "b"], 1)
+        let rxn4 = Rxn (["b"; "xGTy"], ["xGTy"; "xGTy"], 1)
+        [rxn1; rxn2; rxn3; rxn4]
 
 
 module modulesToReactions =
