@@ -69,6 +69,16 @@ module Helpers =
             | _ -> false
         | _ -> false
 
+    let checkConcStepOrder rs =
+        let rec checkConcStepOrder' foundStep =
+            function
+            | [] -> (true, [])
+            | (Conc _) :: _ when foundStep -> (false, [ ConcStepWrongOrder ])
+            | (Step _) :: rs -> checkConcStepOrder' true rs
+            | (_) :: rs -> checkConcStepOrder' foundStep rs
+
+        checkConcStepOrder' false rs
+
     let checkMissingCmp rs =
         let rec checkMissingCmp' cmpBefore =
             function
@@ -116,3 +126,4 @@ module Helpers =
         | CyclicModuleDependency m -> sprintf "Cyclic dependency in module %A" (moduleToString m)
         | CyclicStepDependency specs ->
             sprintf "Cyclic dependency of variable(s): %A in step" (String.concat ", " specs)
+        | ConcStepWrongOrder -> "Concentration declaration cannot be after a step declaration"

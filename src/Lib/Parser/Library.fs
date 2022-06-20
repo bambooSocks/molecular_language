@@ -28,7 +28,8 @@ module Parser =
     let runCrnParser s =
         let pInteger: Parser<int, unit> = token pint32
 
-        let pSpecies: Parser<string, unit> = token (many1SatisfyL isLetter "species")
+        let isLetterOrDigit x = isLetter x || isDigit x
+        let pSpecies: Parser<string, unit> = token (many1Satisfy2L isLetter isLetterOrDigit "species")
 
         let pModule =
             let helper2 modName constr =
@@ -69,7 +70,9 @@ module Parser =
 
         and pStep =
             parse {
-                let! _ = symbol "step[{"
+                let! _ = symbol "step"
+                let! _ = symbol "["
+                let! _ = symbol "{"
                 let! cmdlist = pCommandList
                 let! _ = symbol "}]"
                 return Step cmdlist
@@ -99,7 +102,8 @@ module Parser =
 
         and pConc =
             parse {
-                let! _ = symbol "conc["
+                let! _ = symbol "conc"
+                let! _ = symbol "["
                 let! species = pSpecies
                 let! _ = symbol ","
                 let! number = pInteger
