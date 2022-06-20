@@ -3,51 +3,19 @@
 open Parser.Types
 
 module Interpreter =
-    let getConcs rs =
-        List.choose
-            (function
-            | Conc c -> Some c
-            | _ -> None)
-            rs
-
-    let getSteps rs =
-        List.choose
-            (function
-            | Step s -> Some s
-            | _ -> None)
-            rs
-
-    let rec rootL (state: State) (program: TRoot list) =
-        match program with
-        | [] -> state
-        | rootList ->
-            let concList = getConcs rootList
-            let stepList = getSteps rootList
-            let state1 = concL state concList
-            printfn "s1: %A" state1
-            let state2 = stepL state stepList
-            printfn "s2: %A" state2
-            let t = Map.fold (fun acc key value -> Map.add key value acc) state1 state2
-            printfn "T: %A" t
-            t
-
-    and concL (state: State) (program: TConc list) =
+    let rec concL (state: State) (program: TConc list) =
         match program with
         | [] -> state
         | concList -> List.fold conc state concList
 
     and conc (state: State) (species, number) = Map.add species number state
 
-    and stepL (state: State) (program: TStep list) =
+    let rec stepL (state: State) (program: TStep list) =
         match program with
         | [] -> state
         | stepList -> List.fold step state stepList
 
-    and step (state: State) commList =
-        printfn "Before %A: %A " commList state
-        let res = List.fold command state commList
-        printfn "After %A: %A " commList res
-        res
+    and step (state: State) commList = List.fold command state commList
 
     and command (state: State) (program: TCommand) =
         match program with
@@ -86,9 +54,25 @@ module Interpreter =
         | IfLE cmdList when (flag = -1) -> fwd cmdList
         | _ -> state
 
-    let rec interpret (state: State) rtList =
-        seq {
-            let state' = rootL state rtList
-            yield state'
-            yield! interpret state' rtList
-        }
+    let rec interpret (initialState: State) (rootList: TRoot list) =
+        let concList = List.choose
+                        (function
+                        | Conc c -> Some c
+                        | _ -> None)
+                        rootList
+
+        let stepList = List.choose
+                        (function
+                        | Step s -> Some s
+                        | _ -> None)
+                        rootList
+                
+        let stateAfterConc = concL initialState concList
+
+        let rec interpretSteps (initialState: State) (stpL:TStep List) = 
+            seq {
+                    let state = stepL initialState stepList
+                    yield state
+                    yield! interpretSteps state stepList
+                }
+        interpretSteps stateAfterConc stepList
