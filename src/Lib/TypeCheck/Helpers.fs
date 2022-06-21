@@ -122,7 +122,7 @@ module Helpers =
         function
         | CompareMissing c ->
             sprintf "Conditional expression: %s is missing a compare module in previous steps" (getConditionalName c)
-        | NegativeConcentration (s, n) -> sprintf "Concentration for %s cannot be negative, value given %i" s n
+        | NegativeConcentration (s, n) -> sprintf "Concentration for %s cannot be negative, value given %f" s n
         | CyclicModuleDependency m -> sprintf "Cyclic dependency in module %A" (moduleToString m)
         | CyclicStepDependency specs ->
             sprintf "Cyclic dependency of variable(s): %A in step" (String.concat ", " specs)

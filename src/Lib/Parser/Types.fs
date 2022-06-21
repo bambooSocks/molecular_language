@@ -30,7 +30,7 @@ module Types =
         | IfLE of TCommand list
 
     and TSpecies = string
-    and TNumber = int
+    and TNumber = float
 
-    type State = Map<TSpecies, float>
+    type State = Map<TSpecies, TNumber>
     type TRxn = Rxn of TSpecies list * TSpecies list * float

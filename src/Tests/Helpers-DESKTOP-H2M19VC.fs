@@ -5,12 +5,20 @@ open Parser.Types
 module Helpers =
     let mulitpleToStr fn xs = List.map fn xs |> String.concat ","
 
+    let exprToString (e: TSpecies list) = String.concat "+" e
+
+    let rxnToString (Rxn (e1, e2, s)) =
+        sprintf "rxn[%s,%s,%f]" (exprToString e1) (exprToString e2) s
+
+    let rxnsToString rxns =
+        List.map rxnToString rxns |> String.concat ","
+
     let rec rootListToString rs =
         sprintf "crn={%s}" (mulitpleToStr rootToString rs)
 
     and rootToString =
         function
-        | Conc (s, n) -> sprintf "conc[%s, %f]" s n
+        | Conc (s, n) -> sprintf "conc[%s, %i]" s n
         | Step cmds -> sprintf "step[{%s}]" (mulitpleToStr commandToString cmds)
 
     and commandToString =
@@ -45,13 +53,4 @@ module Helpers =
 
     let pairwiseCmp seq1 seq2 =  Seq.fold2 (fun acc a b -> mapCmp a b) true seq1 seq2
 
-    let extractInitial (rootList: TRoot list) = 
-        let extractInitial' acc rl = 
-            match rl with
-            | Conc(tConc) :: xs -> acc @ [tConc]
-            | _ -> acc
-        Map.ofList (extractInitial' [] rootList)
-
-    
-
-        
+    let extractInitial = 

@@ -82,8 +82,8 @@ module TypeCheckTests =
 
         [<Test>]
         member _.typeCheckFail_NegativeConcentration() =
-            let conc1 = ("a", -32)
-            let conc2 = ("b", -12)
+            let conc1 = ("a", -32.0)
+            let conc2 = ("b", -12.0)
 
             let ast =
                 [ Conc conc1
