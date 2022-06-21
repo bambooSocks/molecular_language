@@ -34,3 +34,8 @@ let drawSteps stepList =
                     |> Chart.withLineStyle(Shape =StyleParam.Shape.Hvh)
         plot :: list
     Chart.combine (List.fold makePlot [] stepList)|> Chart.show
+
+let speciesConcs species states = List.map (Map.find species) states
+
+let drawStates res =
+    drawSteps (List.map (fun s -> (speciesConcs s res, s)) (Seq.toList <| Map.keys res[0]))

@@ -4,10 +4,6 @@ open Parser.Parser
 open ChemicalReactions.Samples
 open Drawing 
 
-let speciesConcs species states = List.map (Map.find species) states
-let drawStates res =
-    drawSteps (List.map (fun s -> (speciesConcs s res, s)) (Seq.toList <| Map.keys res[0]))
-
 let crn1res = simulateN crn1 crn1s0 0.01 1500
 let crn2res = simulateN crn9 crn9s0 0.01 5000
 let ldcrnres = simulateN ldcrn ldcrns0 0.01 1000

@@ -50,8 +50,8 @@ module Interpreter =
         | IfGT cmdList when (flag = 1) -> fwd cmdList
         | IfGE cmdList when (flag = 1) || (flag = 0) -> fwd cmdList
         | IfEQ cmdList when (flag = 0) -> fwd cmdList
-        | IfLT cmdList when (flag = -1) || (flag = 0) -> fwd cmdList
-        | IfLE cmdList when (flag = -1) -> fwd cmdList
+        | IfLT cmdList when (flag = -1) -> fwd cmdList
+        | IfLE cmdList when (flag = -1) || (flag = 0) -> fwd cmdList
         | _ -> state
 
     let rec interpret (initialState: State) (rootList: TRoot list) =
