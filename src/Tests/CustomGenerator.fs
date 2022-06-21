@@ -65,7 +65,27 @@ module CustomGenerator =
                     Gen.map3 (fun s1 s2 s3 -> Mul(s1, s2, s3)) genSpecies genSpecies genSpecies
                     Gen.map3 (fun s1 s2 s3 -> Div(s1, s2, s3)) genSpecies genSpecies genSpecies ]
 
+    let genRxn =
+        gen {
+            let! s_num1 = Gen.choose (1, 5)
+            let! s_num2 = Gen.choose (1, 5)
+            let! s1 = Gen.listOfLength s_num1 genSpecies
+            let! s2 = Gen.listOfLength s_num2 genSpecies
+            let! f = Gen.map (fun i -> float (i) / 100.0) (Gen.choose (1, 10000))
+            return Rxn(s1, s2, f)
+        }
+
+    let genRxns =
+        gen {
+            let! rxn_num = Gen.choose (1, 5)
+            return! Gen.listOfLength rxn_num genRxn
+        }
+
     type customGenerator =
         static member RootList() =
             { new Arbitrary<TRoot list>() with
                 override x.Generator = genRootList }
+
+        static member Rxns() =
+            { new Arbitrary<TRxn list>() with
+                override x.Generator = genRxns }
