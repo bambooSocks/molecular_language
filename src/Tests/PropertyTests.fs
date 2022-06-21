@@ -26,7 +26,7 @@ module PropertyTests =
             let parsed = getParserResult (runCrnParser generated)
 
             if parsed.IsSome then
-                ast = parsed.Value
+                compareCustom ast parsed.Value
             else
                 false
 

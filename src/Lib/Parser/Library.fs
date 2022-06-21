@@ -7,7 +7,7 @@ open Types
 module Parser =
     let token p = p .>> spaces
     let symbol s = token (pstring s)
-    let pInteger: Parser<int, unit> = token pint32
+    let pFloat: Parser<float, unit> = token pfloat
 
     let runRxnParser s =
         let pSpecies: Parser<string, unit> = token (many1SatisfyL isLetter "species")
@@ -30,7 +30,7 @@ module Parser =
         run pRxns s
 
     let runCrnParser s =
-        let pInteger: Parser<int, unit> = token pint32
+        let pFloat: Parser<float, unit> = token pfloat
 
         let isLetterOrDigit x = isLetter x || isDigit x
 
@@ -112,7 +112,7 @@ module Parser =
                 let! _ = symbol "["
                 let! species = pSpecies
                 let! _ = symbol ","
-                let! number = pInteger
+                let! number = pFloat
                 let! _ = symbol "]"
                 return Conc(species, number)
             }

@@ -60,6 +60,69 @@ module Helpers =
             | _ -> acc
         Map.ofList (extractInitial' [] rootList)
 
-    
+    let compareCustom ast1 ast2 =
+        let eqWithError x y = abs (x-y) < 0.5
 
+        let rec customFold f acc xs ys =
+            match xs, ys with 
+            | [],[] ->  acc
+            | x::xs, y::ys -> customFold f (f acc x y) xs ys
+            | _, [] -> false
+            | [], _ -> false
+
+        let rec concL acc ast1 ast2 =
+            match ast1, ast2 with
+            | [], [] -> acc
+            | concList1, conclist2 -> customFold conc acc concList1 conclist2
+
+        and conc acc (species1, number1) (species2, number2) = acc && (species1 = species2) && (eqWithError number1 number2)
+
+        let rec stepL acc ast1 ast2 =
+            match ast1, ast2 with
+            | [], [] -> acc
+            | stepList1, stepList2 -> customFold step acc stepList1 stepList2
+
+        and step acc commList1 commList2 = customFold command acc commList1 commList2
+
+        and command acc ast1 ast2 =
+            match ast1, ast2 with
+            | Module md, Module md2 -> mdl acc md md2
+            | Conditional cd, Conditional cd2 -> cond acc cd cd2
+            | _ -> false
+
+        and mdl acc ast1 ast2 =
+            match ast1, ast2 with
+            | Ld (A, B), Ld (A', B') -> acc && (A = A') && (B = B') 
+            | Add (A, B, C), Add (A', B', C') -> acc && (A = A') && (B = B') && (C = C')
+            | Sub (A, B, C), Sub (A', B', C') -> acc && (A = A') && (B = B') && (C = C')
+            | Mul (A, B, C), Mul (A', B', C') -> acc && (A = A') && (B = B') && (C = C')
+            | Div (A, B, C), Div (A', B', C') -> acc && (A = A') && (B = B') && (C = C')
+            | Sqrt (A, B), Sqrt (A', B') -> acc && (A = A') && (B = B')
+            | Cmp (A, B), Cmp (A', B') -> acc && (A = A') && (B = B')
+            | _ -> false
+
+        and cond acc ast1 ast2 =
+            let fwd xs ys = customFold command acc xs ys
+
+            match ast1,ast2 with
+            | IfGT cmdList, IfGT cmdList' -> fwd cmdList cmdList'
+            | IfGE cmdList, IfGE cmdList' -> fwd cmdList cmdList'
+            | IfEQ cmdList, IfEQ cmdList' -> fwd cmdList cmdList'
+            | IfLT cmdList, IfLT cmdList' -> fwd cmdList cmdList'
+            | IfLE cmdList, IfLE cmdList' -> fwd cmdList cmdList'
+            | _ -> false
+
+        let concList rootList = List.choose
+                                    (function
+                                    | Conc c -> Some c
+                                    | _ -> None)
+                                    rootList
+
+        let stepList rootList = List.choose
+                                    (function
+                                    | Step s -> Some s
+                                    | _ -> None)
+                                    rootList
         
+
+        (stepL true (stepList ast1) (stepList ast2)) && (concL true (concList ast1) (concList ast2))
