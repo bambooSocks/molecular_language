@@ -40,9 +40,13 @@ module PropertyTests =
             else
                 false
 
+            (*
         [<Property>]
         member _.interpretationCompilationProperty initial rootList = //TODO extract initial state from rootList & figure out how to actually run this
+            
             let interpreted = interpret (extractInitial rootList) rootList
             let compiled = interpret (extractInitial rootList) rootList
-            // let compiled = states computed from the reaction network compiled by the compiler. 
+            // let compiled = states computed from the reaction network compiled by the compiler.
+
             pairwiseCmp interpreted compiled
+            *)
