@@ -18,7 +18,7 @@ let parseCheckExecute src =
             let resultingStates = interpret (Map.ofList []) ast //Interpret program
             printfn "Resulting sequence of states:\n%A\n" resultingStates
 
-            drawStates (Seq.toList (Seq.take 10 resultingStates)) //Draw program
+            drawStates (Seq.toList (Seq.take 10 resultingStates)) // Visualize program
 
         | errs -> printErrors errs
     | Failure (err, _, _) -> printfn "PARSING FAILED:\n%s\n" err
@@ -28,15 +28,11 @@ parseCheckExecute gcd
 
 
 // -------------- DRAWING EXAMPLES --------------------
-// Draw smoothly connecting lines
-// draw: (float list * string) list ->
-// draw [([1.0; 2.0; 3.0; 4.0; 5.0], "first") ; ([4.0; 3.0; 2.0; 1.0], "second")]
-
-// Draw steps
-// drawSteps: (float list * string) list ->
-// drawSteps [([1.0; 2.0; 3.0; 4.0; 5.0], "first") ; ([4.0; 3.0; 2.0; 1.0], "second")]
-
 // Draw States
 // drawStates: Map<Species * float) list ->
 // drawStates (Seq.toList (Seq.take 10 seq{Map<Species,, float>}))
+
+// Draw
+// draw drawingParam stepList
+// drawingParam = "smooth"; "step"
 // ----------------------------------------------------
