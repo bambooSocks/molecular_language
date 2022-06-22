@@ -138,3 +138,7 @@ module CustomGenerator =
         static member Concs() =
             { new Arbitrary<TConc>() with
                 override x.Generator = genConcValues }
+
+        static member Steps() =
+            { new Arbitrary<TStep>() with
+                override x.Generator = genCommandsForCond }

@@ -107,7 +107,10 @@ module Interpreter =
             let specSet = speciesSuperSet Set.empty step
             Set.fold speciesSetToConcList [] specSet
 
-    let rec customInterpret step cList = 
-        let rtList = List.append cList [Step step]
-        printf " -------- rootList \n %A \n" rtList
-        interpret Map.empty rtList
+    let rec customInterpret step = 
+        function 
+        | [] -> Seq.empty
+        | cList -> 
+            let rtList = List.append cList [Step step]
+            printf " -------- rootList \n %A \n" rtList
+            interpret Map.empty rtList
