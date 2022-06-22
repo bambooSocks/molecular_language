@@ -7,6 +7,14 @@ open Parser.Types
 
 module CustomGenerator =
 
+    let isCmp =
+        function
+        | Module m ->
+            match m with
+            | Cmp _ -> true
+            | _ -> false
+        | _ -> false
+
     let charsSeqGen c1 c2 =
         seq {
             for c in c1..c2 do
@@ -25,36 +33,64 @@ module CustomGenerator =
             return TSpecies(String.concat "" ss)
         }
 
-
     let rec genRootList =
         gen {
             let! conc_num = Gen.choose (1, 5)
             let! step_num = Gen.choose (1, 3)
             let! concs = Gen.listOfLength conc_num genConc
-            let! steps = Gen.listOfLength step_num genStep
+            let! steps = genStep false step_num
             return concs @ steps
         }
 
-    and genConc = Gen.map2 (fun s n -> Conc(s, float n)) genSpecies Arb.generate<NormalFloat>
+    and genConc =
+        Gen.map2 (fun s n -> Conc(s, float n)) genSpecies Arb.generate<NormalFloat>
 
-    and genStep = Gen.map (fun cmds -> Step cmds) genCommands
-
-    and genCommands =
+    and genStep wasCmp n =
         gen {
-            let! n = Gen.choose (1, 6)
-            return! Gen.listOfLength n genCommand
+            match n with
+            | 0 -> return []
+            | n ->
+                let! isCurrentCmp, cmds = genCommands wasCmp
+                let! rest = genStep isCurrentCmp (n - 1)
+                let! step = Gen.constant (Step cmds)
+                return step :: rest
         }
 
-    and genCommand =
-        Gen.frequency [ (10, (Gen.map (fun m -> Module m) genModule))
+    and genCommands wasCmp =
+        gen {
+            let! n = Gen.choose (1, 6)
+
+            if wasCmp then
+                let! cmds = Gen.listOfLength n genAnyCommand
+                return (wasCmp, cmds)
+            else
+                let! cmds = Gen.listOfLength n genModuleCommand
+                let! isCurrentCmp = Gen.constant (List.exists isCmp cmds)
+                return (isCurrentCmp, cmds)
+        }
+
+    and genModuleCommand =
+        gen {
+            let! m = genModule
+            return Module m
+        }
+
+    and genAnyCommand =
+        Gen.frequency [ (10, genModuleCommand)
                         (1, (Gen.map (fun c -> Conditional c) genConditional)) ]
 
+    and genCommandsForCond =
+        gen {
+            let! _, cmds = genCommands true
+            return cmds
+        }
+
     and genConditional =
-        Gen.oneof [ Gen.map (fun cmds -> IfGT cmds) genCommands
-                    Gen.map (fun cmds -> IfGE cmds) genCommands
-                    Gen.map (fun cmds -> IfEQ cmds) genCommands
-                    Gen.map (fun cmds -> IfLT cmds) genCommands
-                    Gen.map (fun cmds -> IfLE cmds) genCommands ]
+        Gen.oneof [ Gen.map (fun cmds -> IfGT cmds) genCommandsForCond
+                    Gen.map (fun cmds -> IfGE cmds) genCommandsForCond
+                    Gen.map (fun cmds -> IfEQ cmds) genCommandsForCond
+                    Gen.map (fun cmds -> IfLT cmds) genCommandsForCond
+                    Gen.map (fun cmds -> IfLE cmds) genCommandsForCond ]
 
     and genModule =
         Gen.oneof [ Gen.map2 (fun s1 s2 -> Ld(s1, s2)) genSpecies genSpecies
@@ -89,7 +125,3 @@ module CustomGenerator =
         static member Rxns() =
             { new Arbitrary<TRxn list>() with
                 override x.Generator = genRxns }
-        
-        static member Step() =
-            { new Arbitrary<TStep>() with
-                override x.Generator = genCommands }
