@@ -60,15 +60,15 @@ module Helpers =
             | _ -> acc
         Map.ofList (extractInitial' [] rootList)
 
-    let compareCustom ast1 ast2 =
-        let eqWithError x y = abs (x-y) < 0.5
-
-        let rec customFold f acc xs ys =
+    let rec customFold f acc xs ys =
             match xs, ys with 
             | [],[] ->  acc
             | x::xs, y::ys -> customFold f (f acc x y) xs ys
             | _, [] -> false
             | [], _ -> false
+
+    let compareCustom ast1 ast2 =
+        let eqWithError x y = abs (x-y) < 0.5
 
         let rec concL acc ast1 ast2 =
             match ast1, ast2 with
@@ -126,3 +126,12 @@ module Helpers =
         
 
         (stepL true (stepList ast1) (stepList ast2)) && (concL true (concList ast1) (concList ast2))
+
+    let rec permute list = 
+        let rec distribute e = function
+            | [] -> [[e]]
+            | x::xs' as xs -> (e::xs)::[for xs in distribute e xs' -> x::xs]
+
+        match list with
+        | [] -> [[]]
+        | e::xs -> List.collect (distribute e) (permute xs)
