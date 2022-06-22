@@ -35,32 +35,32 @@ module InterpreterTests =
 
         [<Test>]
         member _.ldTest() =
-            Assert.True (outputTest ld ldExpect)
+            Assert.True (interpreterOutputTest ld ldExpect)
 
         [<Test>]
         member _.addTest() =
-            Assert.True (outputTest add addExpect)
+            Assert.True (interpreterOutputTest add addExpect)
 
         [<Test>]
         member _.subTest() =
-            Assert.True (outputTest sub subExpect)
+            Assert.True (interpreterOutputTest sub subExpect)
             
         [<Test>]
         member _.mulTest() =
-            Assert.True (outputTest mul mulExpect)
+            Assert.True (interpreterOutputTest mul mulExpect)
 
-            
         [<Test>]
         member _.divTest() =
-            Assert.True (outputTest div divExpect)
+            Assert.True (interpreterOutputTest div divExpect)
             
         [<Test>]
         member _.sqrtTest() =
-            Assert.True (outputTest sqrt sqrtExpect)
+            Assert.True (interpreterOutputTest sqrt sqrtExpect)
             
         [<Test>]
         member _.cmpTest() =
-            Assert.True (outputTest cmp cmpExpect)
+            Assert.True (interpreterOutputTest cmp cmpExpect)
+            
 
 
 

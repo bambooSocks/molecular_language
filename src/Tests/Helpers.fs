@@ -152,7 +152,7 @@ module Helpers =
 
 
 
-    let outputTest src expected =
+    let interpreterOutputTest src expected =
         let parserResult = runCrnParser src //Parse program
 
         match parserResult with
