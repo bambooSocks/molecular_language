@@ -1,6 +1,12 @@
 namespace Tests
 
 open Parser.Types
+open Parser.Parser
+open Interpreter.Interpreter
+open Drawing
+open TypeCheck.TypeCheck
+open App.Examples
+open FParsec
 
 module Helpers =
     let mulitpleToStr fn xs = List.map fn xs |> String.concat ","
@@ -51,7 +57,7 @@ module Helpers =
                                                                             | _ -> false
                                                                             ) true a
 
-    let pairwiseCmp seq1 seq2 =  Seq.fold2 (fun acc a b -> mapCmp a b) true seq1 seq2
+    let pairwiseCmp seq1 seq2 =  Seq.fold2 (fun acc a b -> mapCmp a b && mapCmp b a) true seq1 seq2
 
     let extractInitial (rootList: TRoot list) = 
         let extractInitial' acc rl = 
@@ -143,3 +149,24 @@ module Helpers =
     let rec extractConc troot = match troot with
                                 | Conc(s, c) -> s, c
                                 | _ -> failwith "Not a conc"
+
+
+
+    let interpreterOutputTest src expected =
+        let parserResult = runCrnParser src //Parse program
+
+        match parserResult with
+        | Success (ast, _, _) ->
+            let checkResult = check ast
+
+            match snd checkResult with
+            | [] ->
+                let resultingStates = Seq.head (interpret (Map.ofList []) ast) //Interpret program
+
+                //printf "%A" resultingStates
+                
+                mapCmp expected resultingStates
+
+            | _ -> false
+        | Failure (err, _, _) -> printfn "PARSING FAILED:\n%s\n" err
+                                 false
