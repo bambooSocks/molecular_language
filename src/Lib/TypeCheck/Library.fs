@@ -19,7 +19,11 @@ module TypeCheck =
         | Conc c -> checkNegativeConcentration c
         | Step cmds ->
             let noCycDep = checkCyclicDependencyInStep cmds
-            combineResults noCycDep (checkMultiple checkCommand cmds)
+            let noMultipleCmp = checkMultipleCmpInStep cmds
+
+            checkMultiple checkCommand cmds
+            |> combineResults noCycDep
+            |> combineResults noMultipleCmp
 
     and checkCommand =
         function

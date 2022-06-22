@@ -72,6 +72,11 @@ module PropertyTests =
             res
 
         [<Property>]
+        member _.noMultipleCmpInStepProperty(cmds: TCommand list) =
+            let res, _ = checkMultipleCmpInStep cmds
+            res
+
+        [<Property>]
         member _.interpretationCompilationProperty(rootList: TRoot list) =
 
             let xss = List.fold isStep [] rootList

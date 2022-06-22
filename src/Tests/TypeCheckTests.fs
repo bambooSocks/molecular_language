@@ -169,3 +169,23 @@ module TypeCheckTests =
             let (res, errors) = check ast
             Assert.False(res)
             Assert.That(errors, Is.SupersetOf [ CyclicStepDependency [ spA; spB ] ])
+
+        [<Test>]
+        member _.typeCheckFail_MultipleComparesInOneStep() =
+            let ast =
+                [ Conc("a", 32)
+                  Conc("b", 12)
+                  Step(
+                      [ Module(Ld("a", "atmp"))
+                        Module(Ld("b", "btmp"))
+                        Module(Cmp("a", "b"))
+                        Module(Cmp("a", "b")) ]
+                  )
+                  Step(
+                      [ Conditional(IfGT([ Module(Sub("atmp", "btmp", "a")) ]))
+                        Conditional(IfLT([ Module(Sub("btmp", "atmp", "b")) ])) ]
+                  ) ]
+
+            let (res, errors) = check ast
+            Assert.False(res)
+            Assert.That(errors, Is.SupersetOf [ MultipleComparesInOneStep ])
