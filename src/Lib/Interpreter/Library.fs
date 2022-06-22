@@ -76,3 +76,38 @@ module Interpreter =
                     yield! interpretSteps state stepList
                 }
         interpretSteps stateAfterConc stepList
+    
+    let concListFromSet step = 
+
+            let rec speciesSuperSet acc (step: TStep) =
+
+                let rec speciesSet acc cmd = 
+                
+                    let add x s = Set.add x s
+                    let fwd x = List.fold speciesSet acc x
+                    
+                    match cmd with
+                    | Module md ->  match md with
+                                    | Ld (A, B) -> add A acc |> add B
+                                    | Add (A, B, C) -> add A acc |> add B |> add C
+                                    | Sub (A, B, C) -> add A acc |> add B |> add C
+                                    | Mul (A, B, C) -> add A acc |> add B |> add C
+                                    | Div (A, B, C) -> add A acc |> add B |> add C
+                                    | Sqrt (A, B) -> add A acc |> add B
+                                    | Cmp (A, B) -> add A acc |> add B
+                    | Conditional cd -> match cd with
+                                        | IfGT cmdList -> fwd cmdList
+                                        | IfGE cmdList -> fwd cmdList
+                                        | IfEQ cmdList -> fwd cmdList
+                                        | IfLT cmdList -> fwd cmdList
+                                        | IfLE cmdList -> fwd cmdList   
+                List.fold speciesSet acc step
+                
+            let speciesSetToConcList acc specie = acc @ [Conc (specie, System.Random().Next (1,10))]
+            let specSet = speciesSuperSet Set.empty step
+            Set.fold speciesSetToConcList [] specSet
+
+    let rec customInterpret step cList = 
+        let rtList = List.append cList [Step step]
+        printf " -------- rootList \n %A \n" rtList
+        interpret Map.empty rtList
