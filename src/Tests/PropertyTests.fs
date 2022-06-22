@@ -61,12 +61,21 @@ module PropertyTests =
             else
                 false
 
-            
         [<Property>]
-        member _.interpretationCompilationProperty (rootList: TRoot list) =
-            
+        member _.cmpBeforeCondProperty ast =
+            let res, _ = checkMissingCmp ast
+            res
+
+        [<Property>]
+        member _.noNegativeConcentrationProperty(conc: TConc) =
+            let res, _ = checkNegativeConcentration conc
+            res
+
+        [<Property>]
+        member _.interpretationCompilationProperty(rootList: TRoot list) =
+
             let xss = List.fold isStep [] rootList
-            let xs = (List.fold (fun acc x -> acc @ concListFromSet x) [] xss )
+            let xs = (List.fold (fun acc x -> acc @ concListFromSet x) [] xss)
             let x = Map.ofList (List.map (extractConc) xs)
 
             //printf "%A\n%A\n%A\n%A" rootList xss xs x
@@ -75,9 +84,3 @@ module PropertyTests =
             let compiled = Seq.take 100 (interpret x rootList)
 
             pairwiseCmp interpreted compiled
-
-
-        [<Property>]
-        member _.cmpBeforeCondProperty ast =
-            let res, _ = checkMissingCmp ast
-            res     

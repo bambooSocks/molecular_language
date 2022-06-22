@@ -42,6 +42,15 @@ module Helpers =
         List.map getInOutsForCommand cmds
         |> List.fold combineInOut ([], [])
 
+    let checkNegativeConcentration ((s, n): TConc) =
+        let nonNeg = n >= 0
+
+        (nonNeg,
+         if nonNeg then
+             []
+         else
+             [ NegativeConcentration(s, n) ])
+
     // Check for cyclic dependencies in commands of a step
     let checkCyclicDependencyInStep cmds =
         let cycDep =

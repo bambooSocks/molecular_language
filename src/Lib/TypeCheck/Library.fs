@@ -16,14 +16,7 @@ module TypeCheck =
 
     and checkRoot =
         function
-        | Conc (s, n) ->
-            let nonNeg = n >= 0
-
-            (nonNeg,
-             if nonNeg then
-                 []
-             else
-                 [ NegativeConcentration(s, n) ])
+        | Conc c -> checkNegativeConcentration c
         | Step cmds ->
             let noCycDep = checkCyclicDependencyInStep cmds
             combineResults noCycDep (checkMultiple checkCommand cmds)

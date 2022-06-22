@@ -42,8 +42,17 @@ module CustomGenerator =
             return concs @ steps
         }
 
-    and genConc =
-        Gen.map2 (fun s n -> Conc(s, float n)) genSpecies Arb.generate<NormalFloat>
+    and genConc = Gen.map Conc genConcValues
+
+    and genConcValues: Gen<TConc> =
+        gen {
+            let! fl =
+                Arb.generate<NormalFloat>
+                |> Gen.where (fun f -> (float f) >= 0.0)
+
+            let! s = genSpecies
+            return (s, float fl)
+        }
 
     and genStep wasCmp n =
         gen {
@@ -125,3 +134,7 @@ module CustomGenerator =
         static member Rxns() =
             { new Arbitrary<TRxn list>() with
                 override x.Generator = genRxns }
+
+        static member Concs() =
+            { new Arbitrary<TConc>() with
+                override x.Generator = genConcValues }
