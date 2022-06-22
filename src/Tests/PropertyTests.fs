@@ -63,7 +63,7 @@ module PropertyTests =
 
             
         [<Property>]
-        member _.interpretationCompilationProperty (rootList: TRoot list) = //TODO extract initial state from rootList & figure out how to actually run this
+        member _.interpretationCompilationProperty (rootList: TRoot list) =
             
             let xss = List.fold isStep [] rootList
             let xs = (List.fold (fun acc x -> acc @ concListFromSet x) [] xss )
@@ -71,20 +71,13 @@ module PropertyTests =
 
             //printf "%A\n%A\n%A\n%A" rootList xss xs x
 
-            let interpreted =  interpret x rootList
-            let compiled = interpret x rootList
+            let interpreted = Seq.take 100 (interpret x rootList)
+            let compiled = Seq.take 100 (interpret x rootList)
+
+            pairwiseCmp interpreted compiled
+
+
         [<Property>]
         member _.cmpBeforeCondProperty ast =
             let res, _ = checkMissingCmp ast
-            res
-
-(*
-        [<Property>]
-        member _.interpretationCompilationProperty initial rootList = //TODO extract initial state from rootList & figure out how to actually run this
-
-            let interpreted = interpret (extractInitial rootList) rootList
-            let compiled = interpret (extractInitial rootList) rootList
-            // let compiled = states computed from the reaction network compiled by the compiler.
-
-            pairwiseCmp interpreted compiled
-            
+            res     
