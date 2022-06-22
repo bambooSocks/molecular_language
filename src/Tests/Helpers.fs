@@ -135,3 +135,11 @@ module Helpers =
         match list with
         | [] -> [[]]
         | e::xs -> List.collect (distribute e) (permute xs)
+
+    let isStep acc troot = match troot with
+                                | Step(x) -> acc @ [x]
+                                | _ -> acc
+
+    let rec extractConc troot = match troot with
+                                | Conc(s, c) -> s, c
+                                | _ -> failwith "Not a conc"
