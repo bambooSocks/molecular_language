@@ -128,5 +128,5 @@ module Interpreter =
         | [] -> Seq.empty
         | cList -> 
             let rtList = List.append cList [Step step]
-            //printf "------------------PermutedStep+Conc -------------------------- \n %A \n" rtList
+            printf "------------------Step+Conc -------------------------- \n %A \n" rtList
             interpret Map.empty rtList
