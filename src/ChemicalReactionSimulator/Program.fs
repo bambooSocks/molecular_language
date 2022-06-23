@@ -6,7 +6,7 @@ open ChemicalReactions.Simulator
 open FParsec
 open Parser.Parser
 open ChemicalReactions.Samples
-open Drawing 
+open Drawing
 
 let crn1res = simulateN crn1 crn1s0 0.01 1500
 let crn2res = simulateN crn9 crn9s0 0.01 5000
@@ -24,10 +24,10 @@ let crn7res = simulateN crn7 crn7s0 0.001 1000
 //drawStates subcrnres
 //drawStates divcrnres
 //drawStates sqrtcrnres
-//printfn "%A" crn7res
 
 let parseSimulateDraw src =
     let parseResult = runRxnParser src
+
     match parseResult with
     | Success (rxns, _, _) ->
         printfn "Parsing succeeded:%A" rxns

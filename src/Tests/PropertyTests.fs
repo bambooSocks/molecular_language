@@ -28,47 +28,21 @@ module PropertyTests =
 
         [<Property>]
         member _.testProp(ast: TCommand list) =
-            // printf "^^^^^^^^^^^^^^^^^^^ Original Ast ^^^^^^^^^^^^^^^^^^^^ \n %A \n" ast
             let stepPermutations = permute ast
-            //printf "Permutations -------- \n %A \n" stepPermutations
             let concList = concListFromSet ast
-            //printf "OriginalConcList -------- \n %A \n" concList
             let originalInterpretation = customInterpret ast concList
 
             let isPermutationEqualToOriginal acc permutedStep =
-                // printf
-                //     ">>>>>>>>>>>>>>>>>>OriginalInterpretation >>>>>>>>>>>>>>>>>> \n %A \n"
-                //     (List.ofSeq (Seq.take 4 originalInterpretation))
-
                 let permutedStepInterpretation = customInterpret permutedStep concList
-
-                // printf
-                //     "------------------PermutedStepInterpretation -------------------------- \n %A \n"
-                //     (List.ofSeq (Seq.take 4 permutedStepInterpretation))
 
                 let boo =
                     (List.ofSeq (Seq.take 4 originalInterpretation)) = (List.ofSeq (
                         Seq.take 4 permutedStepInterpretation
                     ))
 
-                // printf "------------------Boolean -------------------------- \n %A \n" boo
                 acc && boo
 
-            let ret = List.fold isPermutationEqualToOriginal true stepPermutations
-
-            if ret then
-                ret
-            else
-                let noCycDep = checkCyclicDependencyInStep ast
-                let noMultipleCmp = checkMultipleCmpInStep ast
-
-                let errors =
-                    checkMultiple checkCommand ast
-                    |> combineResults noCycDep
-                    |> combineResults noMultipleCmp
-
-                printfn "%A" errors
-                ret
+            List.fold isPermutationEqualToOriginal true stepPermutations
 
         [<Property>]
         member _.crnParserProperty ast =
@@ -111,8 +85,6 @@ module PropertyTests =
             let xss = List.fold isStep [] rootList
             let xs = (List.fold (fun acc x -> acc @ concListFromSet x) [] xss)
             let x = Map.ofList (List.map (extractConc) xs)
-
-            //printf "%A\n%A\n%A\n%A" rootList xss xs x
 
             let interpreted = Seq.take 100 (interpret x rootList)
             let compiled = Seq.take 100 (interpret x rootList)
