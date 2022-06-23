@@ -14,6 +14,8 @@ open CustomGenerator
 open Helpers
 open Interpreter.Interpreter
 open TypeCheck.Helpers
+open ChemicalReactions.modulesToReactions
+open ChemicalReactions.Simulator
 
 module PropertyTests =
 
@@ -73,8 +75,9 @@ module PropertyTests =
             let res, _ = checkMultipleCmpInStep cmds
             res
 
+            (*
         [<Property>]
-        member _.interpretationCompilationProperty(rootList: TRoot list) =
+        member _.interpretationCompilationProperty(rootList: Parser.Types.TRoot list) =
 
             let xss = List.fold isStep [] rootList
             let xs = (List.fold (fun acc x -> acc @ concListFromSet x) [] xss)
@@ -83,6 +86,9 @@ module PropertyTests =
             //printf "%A\n%A\n%A\n%A" rootList xss xs x
 
             let interpreted = Seq.take 100 (interpret x rootList)
-            let compiled = Seq.take 100 (interpret x rootList)
+
+            let rxnnetwork = fst(toReactionNetwork rootList)
+            let compiled = simulateN rxnnetwork x 0.1 1000
 
             pairwiseCmp interpreted compiled
+            *)

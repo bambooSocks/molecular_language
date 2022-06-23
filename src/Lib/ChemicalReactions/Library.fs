@@ -225,7 +225,7 @@ module modulesToReactions =
         concatStrs <| intersperse ",\n" (List.map reactionToStr reactions)
 
     // Compile a list of steps into a list of reactions
-    let toReactionNetwork (rootList: Parser.Types.TRoot list) =
+    let toReactionNetwork (rootList) =
         // Compile a single step
         let stepToCrns step oscCount =
             let osc = "osc" + string oscCount // Current oscillator species
