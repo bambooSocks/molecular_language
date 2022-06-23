@@ -9,22 +9,22 @@ Matej Majtan - s184457
 Andrei Redis - s164572
 
 Report contribution:
-    Abstract - 
-    Subsection 1.1 - Matej Majtan & Andrei Redis
+    Abstract - Kristine Maria Klok Jørgensen
+    Subsection 1.1 - Matej Majtan, Andrei Redis & Kristine Maria Klok Jørgensen
     Subsection 1.2 - Matej Majtan
     Subsection 1.3 - Andrei Redis
-    Subsection 2.1 - Kristine Maria Klok Jørgensen
-    Subsection 2.2 - 
-    Subsection 2.3 - 
-    Section 3 - Kristine Maria Klok Jørgensen
-    Section 4 - 
-    Section 5 - 
+    Subsection 2.1 - hristopher Acosta
+    Subsection 2.2 - Christopher Acosta & Kristine Maria Klok Jørgensen
+    Subsection 2.3 - Kristine Maria Klok Jørgensen
+    Section 3 - Christopher Acosta
+    Section 4 - Kristine Maria Klok Jørgensen
+    Section 5 - All
 
 Program contribution:
 Detailed contribution to the source code can be found in comments on top of each file.
 
     An interpreter for CRN++:
-    The parser was developed mainly by Matej Majtan and Christopher Acosta. The type checking was done by Matej Majtan and the interpreter was implemented by Andrei Redis. The visualization was done by Kristine Maria Klok Jørgensen.
+    The parser was developed mainly by Matej Majtan, Christopher Acosta and Andrei Redis. The type checking was done by Matej Majtan and the interpreter was implemented by Andrei Redis. The visualization was done by Kristine Maria Klok Jørgensen.
 
     Chemical reactions:
     The parser for chemical reactions was done by Christopher Acosta. The simulator was also done by Christopher Acosta. The visualization was done by Kristine Maria Klok Jørgensen.
@@ -34,7 +34,7 @@ Detailed contribution to the source code can be found in comments on top of each
 
     Tests project:
     The property tests were distributed as follows:
-        Parser properties - Matej Majtan
+        Parser properties - Matej Majtan and Andrei Redis
         Semantic properties - Matej Majtan
         Parallel command execution property - Andrei Redis
         Interpreter and compiler comparison property - Kristine Maria Klok Jørgensen

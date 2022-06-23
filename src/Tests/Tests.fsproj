@@ -10,12 +10,15 @@
     <Compile Include="TypeCheckTests.fs" />
     <Compile Include="InterpreterTests.fs" />
     <Compile Include="..\App\Examples.fs" />
+    <Compile Include="..\Lib\Parser\Types.fs" />
+    <Compile Include="..\Lib\ChemicalReactions\library.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Lib\Parser\Parser.fsproj" />
     <ProjectReference Include="..\Lib\TypeCheck\TypeCheck.fsproj" />
     <ProjectReference Include="..\Lib\Interpreter\Interpreter.fsproj" />
+    <ProjectReference Include="..\Lib\ChemicalReactions\ChemicalReactions.fsproj" />
     <ProjectReference Include="..\App\App.fsproj" />
     
   </ItemGroup>

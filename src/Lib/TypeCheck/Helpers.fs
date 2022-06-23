@@ -68,6 +68,22 @@ module Helpers =
          else
              [ CyclicStepDependency cycDep ])
 
+    let checkSameOutputInStep cmds =
+        let repSpecs =
+            getInOutsForCommandList cmds
+            |> snd
+            |> List.groupBy id
+            |> List.choose (fun (key, set) ->
+                if set.Length > 1 then
+                    Some key
+                else
+                    None)
+
+        (repSpecs.IsEmpty,
+         if repSpecs.IsEmpty then
+             []
+         else
+             [ SameOutputInStep repSpecs ])
 
     let getConditionals =
         function
@@ -154,3 +170,4 @@ module Helpers =
             sprintf "Cyclic dependency of variable(s): %A in step" (String.concat ", " specs)
         | ConcStepWrongOrder -> "Concentration declaration cannot be after a step declaration"
         | MultipleComparesInOneStep -> "There can be only one compare module in a step declaration"
+        | SameOutputInStep sps -> sprintf "Two modules cannot output to the same species: %A" sps
