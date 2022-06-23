@@ -48,6 +48,7 @@ module Simulator =
         simulate crn st ss dt |> Seq.take n |> Seq.toList
 
 module Samples =
+    // CRNs from the paper along with example initial concentrations.
     let crn1s0 = Map.ofList [("a", 6.0); ("b", 2.0); ("c", 0.0)]
     let crn1 =
         let rxn1 = Rxn (["a"; "b"], ["a"; "b"; "c"], 1)
@@ -108,6 +109,14 @@ module Samples =
         [rxn1; rxn2; rxn3; rxn4]
 
 module modulesToReactions =
+    // Helper functions
+    let rec intersperse i = function
+        | [] -> []
+        | [x] -> [x]
+        | x::xs -> x :: i :: intersperse i xs
+
+    let concatStrs (xs : string list) = List.fold (fun acc s -> acc + s) "" xs
+
     // Generate the oscillator CRN with species prefix x and numbering 1..n
     let genOscCrn x n =
         let iToRxn i =
@@ -207,6 +216,13 @@ module modulesToReactions =
         let m = Map.ofList (List.map (fun species -> (species, 0.0)) species)
         let cmpConcs = if List.contains "cmpGT" species then [("cmpGT", 0.5); ("cmpLT", 0.5); ("cmpB", 0.0)] else []
         List.fold (fun m (s, c) -> Map.add s c m) m (concDecls @ cmpConcs @ initialOscs "osc" oscCount)
+
+    let reactionsOutput reactions =
+        let reactionToStr (Rxn (rs, ps, k)) =
+            let lhs = concatStrs <| intersperse " + " rs
+            let rhs = concatStrs <| intersperse " + " ps
+            "rxn[" + lhs + ", " + rhs + ", " + string k + "]"
+        concatStrs <| intersperse ",\n" (List.map reactionToStr reactions)
 
     // Compile a list of steps into a list of reactions
     let toReactionNetwork (rootList: Parser.Types.TRoot list) =
