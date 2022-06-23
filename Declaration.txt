@@ -13,11 +13,11 @@ Report contribution:
     Subsection 1.1 - Matej Majtan, Andrei Redis & Kristine Maria Klok Jørgensen
     Subsection 1.2 - Matej Majtan
     Subsection 1.3 - Andrei Redis
-    Subsection 2.1 - Kristine Maria Klok Jørgensen
-    Subsection 2.2 - Christopher Acosta
+    Subsection 2.1 - hristopher Acosta
+    Subsection 2.2 - Christopher Acosta & Kristine Maria Klok Jørgensen
     Subsection 2.3 - Kristine Maria Klok Jørgensen
-    Section 3 - Kristine Maria Klok Jørgensen
-    Section 4 - 
+    Section 3 - Christopher Acosta
+    Section 4 - Kristine Maria Klok Jørgensen
     Section 5 - All
 
 Program contribution:
