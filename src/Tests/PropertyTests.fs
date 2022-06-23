@@ -24,25 +24,18 @@ module PropertyTests =
         member _.setUp() =
             let _ = Arb.register<customGenerator> ()
             ()
+
         (*
         [<Property>]
-        member _.testProp (ast: TStep) =
-            printf "Original ast -------- \n %A \n" ast
-            //let stepPermutations = permute ast
-            //printf "Permutations -------- \n %A \n" stepPermutations
+        member _.testProp (ast: TCommand list) =
+            let stepPermutations = permute ast
             let concList = concListFromSet ast
-            printf "OriginalConcList -------- \n %A \n" concList
             let originalInterpretation = customInterpret ast concList
-            printf "OriginalInterpretation -------- \n %A \n" originalInterpretation
-            (*let isPermutationEqualToOriginal acc permutedStep =
-                printf "OriginalInterpretation -------- \n %A \n" originalInterpretation
-                printf "PermutedStep -------- \n %A \n" permutedStep
+            let isPermutationEqualToOriginal acc permutedStep =
                 let permutedStepInterpretation = customInterpret permutedStep concList
-                printf "PermutedStepInterpretation -------- \n %A \n" permutedStepInterpretation
-                acc && (originalInterpretation = permutedStepInterpretation)
-            List.fold isPermutationEqualToOriginal true stepPermutations *)
-            //The problem is that the concs are reinitialized every run I think - concs should be only initialized once
-            //for both orginal and permutation, but the steps should be ran many times
+                let boo = (List.ofSeq (Seq.take 100 originalInterpretation)) = (List.ofSeq (Seq.take 100 permutedStepInterpretation))
+                acc && boo
+            List.fold isPermutationEqualToOriginal true stepPermutations
         *)
 
         [<Property>]

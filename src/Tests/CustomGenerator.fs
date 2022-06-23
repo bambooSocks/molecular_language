@@ -8,6 +8,7 @@ namespace Tests
 
 open FsCheck
 open Parser.Types
+open TypeCheck.Helpers
 
 module CustomGenerator =
 
@@ -31,7 +32,7 @@ module CustomGenerator =
 
     let genSpecies =
         gen {
-            let! i = Gen.choose (1, 6)
+            let! i = Gen.choose (3, 6)
             let! cs = Gen.listOfLength i genChar
             let ss = List.map string cs
             return TSpecies(String.concat "" ss)
@@ -63,8 +64,13 @@ module CustomGenerator =
             match n with
             | 0 -> return []
             | n ->
-                let! cmd_n = Gen.choose (1, 6)
-                let! cmds = genCommand allowCond false cmd_n
+                let! cmd_n = Gen.choose (1, 2)
+                let! cmds = 
+                    genCommand allowCond false cmd_n
+                    |> Gen.where (fun cmds -> 
+                                    let res,_ = checkCyclicDependencyInStep cmds
+                                    res
+                                 )
                 let! hasCmp = Gen.constant (List.exists isCmp cmds)
                 let! rest = genStep hasCmp (n - 1)
                 let! step = Gen.constant (Step cmds)
