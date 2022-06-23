@@ -170,4 +170,4 @@ module Helpers =
             sprintf "Cyclic dependency of variable(s): %A in step" (String.concat ", " specs)
         | ConcStepWrongOrder -> "Concentration declaration cannot be after a step declaration"
         | MultipleComparesInOneStep -> "There can be only one compare module in a step declaration"
-        | SameOutputInStep s -> sprintf "Species: %A cannot be an output of two modules in one step" s
+        | SameOutputInStep sps -> sprintf "Two modules cannot output to the same species: %A" sps

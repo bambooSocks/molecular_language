@@ -16,6 +16,7 @@ open Interpreter.Interpreter
 open TypeCheck.Helpers
 open ChemicalReactions.modulesToReactions
 open ChemicalReactions.Simulator
+open TypeCheck.TypeCheck
 
 module PropertyTests =
 
@@ -27,18 +28,23 @@ module PropertyTests =
             let _ = Arb.register<customGenerator> ()
             ()
 
-        (*
         [<Property>]
-        member _.testProp (ast: TCommand list) =
+        member _.parallelCommandsProperty(ast: TCommand list) =
             let stepPermutations = permute ast
             let concList = concListFromSet ast
             let originalInterpretation = customInterpret ast concList
+
             let isPermutationEqualToOriginal acc permutedStep =
                 let permutedStepInterpretation = customInterpret permutedStep concList
-                let boo = (List.ofSeq (Seq.take 100 originalInterpretation)) = (List.ofSeq (Seq.take 100 permutedStepInterpretation))
+
+                let boo =
+                    (List.ofSeq (Seq.take 4 originalInterpretation)) = (List.ofSeq (
+                        Seq.take 4 permutedStepInterpretation
+                    ))
+
                 acc && boo
+
             List.fold isPermutationEqualToOriginal true stepPermutations
-        *)
 
         [<Property>]
         member _.crnParserProperty ast =
@@ -75,15 +81,13 @@ module PropertyTests =
             let res, _ = checkMultipleCmpInStep cmds
             res
 
-            (*
+(*
         [<Property>]
         member _.interpretationCompilationProperty(rootList: Parser.Types.TRoot list) =
 
             let xss = List.fold isStep [] rootList
             let xs = (List.fold (fun acc x -> acc @ concListFromSet x) [] xss)
             let x = Map.ofList (List.map (extractConc) xs)
-
-            //printf "%A\n%A\n%A\n%A" rootList xss xs x
 
             let interpreted = Seq.take 100 (interpret x rootList)
 

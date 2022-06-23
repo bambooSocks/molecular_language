@@ -24,7 +24,7 @@ Program contribution:
 Detailed contribution to the source code can be found in comments on top of each file.
 
     An interpreter for CRN++:
-    The parser was developed mainly by Matej Majtan and Christopher Acosta. The type checking was done by Matej Majtan and the interpreter was implemented by Andrei Redis. The visualization was done by Kristine Maria Klok Jørgensen.
+    The parser was developed mainly by Matej Majtan, Christopher Acosta and Andrei Redis. The type checking was done by Matej Majtan and the interpreter was implemented by Andrei Redis. The visualization was done by Kristine Maria Klok Jørgensen.
 
     Chemical reactions:
     The parser for chemical reactions was done by Christopher Acosta. The simulator was also done by Christopher Acosta. The visualization was done by Kristine Maria Klok Jørgensen.
@@ -34,7 +34,7 @@ Detailed contribution to the source code can be found in comments on top of each
 
     Tests project:
     The property tests were distributed as follows:
-        Parser properties - Matej Majtan
+        Parser properties - Matej Majtan and Andrei Redis
         Semantic properties - Matej Majtan
         Parallel command execution property - Andrei Redis
         Interpreter and compiler comparison property - Kristine Maria Klok Jørgensen

@@ -17,7 +17,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Drawing", "src\Lib\Drawing\
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeCheck", "src\Lib\TypeCheck\TypeCheck.fsproj", "{FB813178-B6CA-4245-BEAD-3B6EEA4446F3}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ChemicalReactionSimulator", "src\ChemicalReactionSimulator\ChemicalReactionSimulator.fsproj", "{0FD43A40-7E4D-42CB-8AF5-6C7A399D3F1B}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ChemicalReactionSimulatorExample", "src\ChemicalReactionSimulatorExample\ChemicalReactionSimulatorExample.fsproj", "{0FD43A40-7E4D-42CB-8AF5-6C7A399D3F1B}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ChemicalReactions", "src\Lib\ChemicalReactions\ChemicalReactions.fsproj", "{EA27A644-DEA9-43FF-8442-BFFB04851004}"
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Intepreter", "src\Lib\Interpreter\Interpreter.fsproj", "{8A7C2301-05D7-4BB5-8788-CAC9E692CE2E}"

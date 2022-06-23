@@ -185,8 +185,6 @@ module Helpers =
             | [] ->
                 let resultingStates = Seq.head (interpret (Map.ofList []) ast) //Interpret program
 
-                //printf "%A" resultingStates
-
                 mapCmp expected resultingStates
 
             | _ -> false
