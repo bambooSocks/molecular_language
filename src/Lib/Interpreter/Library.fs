@@ -19,7 +19,10 @@ module Interpreter =
         | [] -> state
         | stepList -> List.fold step state stepList
 
-    and step (state: State) commList = List.fold command state commList
+    and step (state: State) commList = 
+        let state'= List.fold command state commList
+        let stateWCmp = try (Map.add "Cmp" (Map.find "TCmp" state') state') with | ex -> state'
+        stateWCmp
 
     and command (state: State) (program: TCommand) =
         match program with
@@ -42,13 +45,13 @@ module Interpreter =
         | Sqrt (A, B) -> bind B (sqrt (get A))
         | Cmp (A, B) ->
             match Cmp(A, B) with
-            | _ when ((get A - get B) > 0.5) -> bind "Cmp" 1
-            | _ when ((get A - get B) < -0.5) -> bind "Cmp" -1
-            | _ -> bind "Cmp" 0
+            | _ when ((get A - get B) > 0.5) -> bind "TCmp" 1
+            | _ when ((get A - get B) < -0.5) -> bind "TCmp" -1
+            | _ -> bind "TCmp" 0
 
     and cond (state: State) (program: TConditional) =
             let fwd x = List.fold command state x
-            let flag = try (Map.find "Cmp" state) with | ex -> nan
+            let flag = try (Map.find "Cmp" state) with | _ -> nan
 
             match program with
             | IfGT cmdList when (flag = 1) -> fwd cmdList
@@ -117,8 +120,8 @@ module Interpreter =
             acc
             @ [ Conc(specie, System.Random().Next(1, 10)) ]
 
-        let specSet = speciesSuperSet Set.empty step
-        Set.fold speciesSetToConcList [] specSet
+        speciesSuperSet Set.empty step |>
+        Set.fold speciesSetToConcList []
 
     let rec customInterpret step =
         function
