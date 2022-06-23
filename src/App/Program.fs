@@ -9,7 +9,7 @@ open TypeCheck.TypeCheck
 open App.Examples
 open FParsec
 open ChemicalReactions.modulesToReactions
-
+open ChemicalReactions.Simulator
 
 let parseCheckExecute src =
     let parserResult = runCrnParser src //Parse program
@@ -38,8 +38,15 @@ let main a =
         // Parse and interpret a CRN program
         parseCheckExecute gcd
     else if List.contains "simulator" args then
-        printfn "Running sim"
-    else
+        match runRxnParser gcdReactions with
+        | Success (reactions, _, _) ->
+            printfn "Parsed reactions successfully."
+            let initialState = Map.empty
+            let statesSeq = simulateN reactions initialState 0.01 2000
+            drawStates statesSeq
+        | Failure (err, _, _) -> printfn "Error when parsing reactions:\n%s" err
+    else if List.contains "compile" args then
+
         printfn "Wrong command"
 
     0

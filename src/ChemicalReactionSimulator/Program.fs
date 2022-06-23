@@ -31,11 +31,7 @@ let crn7res = simulateN crn7 crn7s0 0.001 1000
 let speciesConcs species states = List.map (Map.find species) states
 let drawStates res =
     drawSteps (List.map (fun s -> (speciesConcs s res, s)) (Seq.toList <| Map.keys res[0]))
-let oscs x n = List.map (fun i -> (x + string i, if i = 1 then 1.0 else 0.01)) [1..n]
 let zeroconcs xs = List.map (fun s -> (s, 0.0)) xs
-let speciesFromRxns rxns =
-    let speciesFromRxn (Rxn (rs, ps, _)) = Set.ofList (rs @ ps)
-    List.fold (fun acc rxn -> Set.union acc (speciesFromRxn rxn)) Set.empty rxns
 
 let reactionsOutput reactions =
     let reactionToStr (Rxn (rs, ps, k)) =
@@ -116,13 +112,8 @@ printfn "%A" res
 
 // ********************************
 // Simulating
-let initialState concDecls =
-    let species = Set.toList (speciesFromRxns reactions)
-    printfn "%A" species
-    let m = Map.ofList (List.map (fun species -> (species, 0.0)) species)
-    let cmpConcs = if List.contains "cmpGT" species then [("cmpGT", 0.5); ("cmpLT", 0.5); ("cmpB", 0.0)] else []
-    List.fold (fun m (s, c) -> Map.add s c m) m (concDecls @ cmpConcs @ oscs "osc" 9)
-printfn "%A" (Map.toList (initialState [("a", 32.0); ("b", 12.0)]))
+
+printfn "%A" (Map.toList (computeInitialState [("a", 32.0); ("b", 12.0)]))
 
 
 let initialState' =

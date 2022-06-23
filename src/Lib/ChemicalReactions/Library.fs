@@ -186,6 +186,21 @@ module modulesToReactions =
 
     let isCmp = function | Module (Cmp _) -> true | _ -> false
 
+    // Compute the set of all species involved in a CRN.
+    let speciesFromRxns rxns =
+        let speciesFromRxn (Rxn (rs, ps, _)) = Set.ofList (rs @ ps)
+        List.fold (fun acc rxn -> Set.union acc (speciesFromRxn rxn)) Set.empty rxns
+
+    // Generate initial concentrations of oscillator species 1..n
+    let initialOscs x n = List.map (fun i -> (x + string i, if i = 1 then 1.0 else 0.01)) [1..n]
+
+    let computeInitialState reactions concDecls oscCount =
+        let species = Set.toList (speciesFromRxns reactions)
+        printfn "%A" species
+        let m = Map.ofList (List.map (fun species -> (species, 0.0)) species)
+        let cmpConcs = if List.contains "cmpGT" species then [("cmpGT", 0.5); ("cmpLT", 0.5); ("cmpB", 0.0)] else []
+        List.fold (fun m (s, c) -> Map.add s c m) m (concDecls @ cmpConcs @ initialOscs "osc" oscCount)
+
     // Compile a list of steps into a list of reactions
     let toReactionNetwork (rootList: Parser.Types.TRoot list) =
         // Compile a single step
