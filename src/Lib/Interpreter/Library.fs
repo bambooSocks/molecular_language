@@ -47,16 +47,16 @@ module Interpreter =
             | _ -> bind "Cmp" 0
 
     and cond (state: State) (program: TConditional) =
-        let fwd x = List.fold command state x
-        let flag = Map.find "Cmp" state
+            let fwd x = List.fold command state x
+            let flag = try (Map.find "Cmp" state) with | ex -> nan
 
-        match program with
-        | IfGT cmdList when (flag = 1) -> fwd cmdList
-        | IfGE cmdList when (flag = 1) || (flag = 0) -> fwd cmdList
-        | IfEQ cmdList when (flag = 0) -> fwd cmdList
-        | IfLT cmdList when (flag = -1) -> fwd cmdList
-        | IfLE cmdList when (flag = -1) || (flag = 0) -> fwd cmdList
-        | _ -> state
+            match program with
+            | IfGT cmdList when (flag = 1) -> fwd cmdList
+            | IfGE cmdList when (flag = 1) || (flag = 0) -> fwd cmdList
+            | IfEQ cmdList when (flag = 0) -> fwd cmdList
+            | IfLT cmdList when (flag = -1) -> fwd cmdList
+            | IfLE cmdList when (flag = -1) || (flag = 0) -> fwd cmdList
+            | _ -> state
 
     let rec interpret (initialState: State) (rootList: TRoot list) =
         let concList =
@@ -123,7 +123,7 @@ module Interpreter =
     let rec customInterpret step =
         function
         | [] -> Seq.empty
-        | cList ->
-            let rtList = List.append cList [ Step step ]
-            printf " -------- rootList \n %A \n" rtList
+        | cList -> 
+            let rtList = List.append cList [Step step]
+            //printf "------------------PermutedStep+Conc -------------------------- \n %A \n" rtList
             interpret Map.empty rtList
