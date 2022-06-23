@@ -44,8 +44,8 @@ let main a =
         | Success (reactions, _, _) ->
             printfn "Parsed reactions successfully."
             let oscCount = computeOscCount (speciesFromRxns reactions)
-            let initialState = computeInitialState reactions [("a", 4.0); ("b", 2.0)] oscCount
-            let statesSeq = simulateN reactions initialState 0.05 10000
+            let initialState = computeInitialState reactions [("a", 16.0); ("b", 12.0)] oscCount
+            let statesSeq = simulateN reactions initialState 0.05 5000
             drawStates statesSeq
         | Failure (err, _, _) -> printfn "Error when parsing reactions:\n%s" err
 
