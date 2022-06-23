@@ -24,10 +24,12 @@ module TypeCheck =
         | Step cmds ->
             let noCycDep = checkCyclicDependencyInStep cmds
             let noMultipleCmp = checkMultipleCmpInStep cmds
+            let noSameOutputs = checkSameOutputInStep cmds
 
             checkMultiple checkCommand cmds
             |> combineResults noCycDep
             |> combineResults noMultipleCmp
+            |> combineResults noSameOutputs
 
     and checkCommand =
         function

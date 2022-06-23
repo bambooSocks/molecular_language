@@ -193,3 +193,31 @@ module TypeCheckTests =
             let (res, errors) = check ast
             Assert.False(res)
             Assert.That(errors, Is.SupersetOf [ MultipleComparesInOneStep ])
+
+        [<Test>]
+        member _.typeCheckFail_SameOutputInStep() =
+            let spC = "c"
+            let spD = "d"
+
+            let ast =
+                [ Conc("a", 32)
+                  Conc("b", 12)
+                  Step(
+                      [ Module(Ld("a", "atmp"))
+                        Module(Ld("b", "btmp"))
+                        Module(Ld("a", spC))
+                        Module(Ld("b", spC))
+                        Module(Cmp("a", "b")) ]
+                  )
+                  Step(
+                      [ Module(Ld("a", spD))
+                        Module(Ld("b", spD))
+                        Module(Ld(spC, spD))
+                        Conditional(IfGT([ Module(Sub("atmp", "btmp", "a")) ]))
+                        Conditional(IfLT([ Module(Sub("btmp", "atmp", "b")) ])) ]
+                  ) ]
+
+            let (res, errors) = check ast
+            Assert.False(res)
+            Assert.That(errors, Is.SupersetOf [ SameOutputInStep [ spC ] ])
+            Assert.That(errors, Is.SupersetOf [ SameOutputInStep [ spD ] ])
