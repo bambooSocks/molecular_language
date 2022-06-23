@@ -14,6 +14,7 @@ open CustomGenerator
 open Helpers
 open Interpreter.Interpreter
 open TypeCheck.Helpers
+open TypeCheck.TypeCheck
 
 module PropertyTests =
 
@@ -26,21 +27,48 @@ module PropertyTests =
             ()
 
         [<Property>]
-        member _.testProp (ast: TCommand list) =
-            printf "^^^^^^^^^^^^^^^^^^^ Original Ast ^^^^^^^^^^^^^^^^^^^^ \n %A \n" ast
+        member _.testProp(ast: TCommand list) =
+            // printf "^^^^^^^^^^^^^^^^^^^ Original Ast ^^^^^^^^^^^^^^^^^^^^ \n %A \n" ast
             let stepPermutations = permute ast
             //printf "Permutations -------- \n %A \n" stepPermutations
             let concList = concListFromSet ast
             //printf "OriginalConcList -------- \n %A \n" concList
             let originalInterpretation = customInterpret ast concList
+
             let isPermutationEqualToOriginal acc permutedStep =
-                printf ">>>>>>>>>>>>>>>>>>OriginalInterpretation >>>>>>>>>>>>>>>>>> \n %A \n" (List.ofSeq (Seq.take 4 originalInterpretation))
+                // printf
+                //     ">>>>>>>>>>>>>>>>>>OriginalInterpretation >>>>>>>>>>>>>>>>>> \n %A \n"
+                //     (List.ofSeq (Seq.take 4 originalInterpretation))
+
                 let permutedStepInterpretation = customInterpret permutedStep concList
-                printf "------------------PermutedStepInterpretation -------------------------- \n %A \n" (List.ofSeq (Seq.take 4 permutedStepInterpretation))
-                let boo = (List.ofSeq (Seq.take 4 originalInterpretation)) = (List.ofSeq (Seq.take 4 permutedStepInterpretation))
-                printf "------------------Boolean -------------------------- \n %A \n" boo
+
+                // printf
+                //     "------------------PermutedStepInterpretation -------------------------- \n %A \n"
+                //     (List.ofSeq (Seq.take 4 permutedStepInterpretation))
+
+                let boo =
+                    (List.ofSeq (Seq.take 4 originalInterpretation)) = (List.ofSeq (
+                        Seq.take 4 permutedStepInterpretation
+                    ))
+
+                // printf "------------------Boolean -------------------------- \n %A \n" boo
                 acc && boo
-            List.fold isPermutationEqualToOriginal true stepPermutations
+
+            let ret = List.fold isPermutationEqualToOriginal true stepPermutations
+
+            if ret then
+                ret
+            else
+                let noCycDep = checkCyclicDependencyInStep ast
+                let noMultipleCmp = checkMultipleCmpInStep ast
+
+                let errors =
+                    checkMultiple checkCommand ast
+                    |> combineResults noCycDep
+                    |> combineResults noMultipleCmp
+
+                printfn "%A" errors
+                ret
 
         [<Property>]
         member _.crnParserProperty ast =

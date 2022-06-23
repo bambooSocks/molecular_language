@@ -19,9 +19,15 @@ module Interpreter =
         | [] -> state
         | stepList -> List.fold step state stepList
 
-    and step (state: State) commList = 
-        let state'= List.fold command state commList
-        let stateWCmp = try (Map.add "Cmp" (Map.find "TCmp" state') state') with | ex -> state'
+    and step (state: State) commList =
+        let state' = List.fold command state commList
+
+        let stateWCmp =
+            try
+                (Map.add "Cmp" (Map.find "TCmp" state') state')
+            with
+            | ex -> state'
+
         stateWCmp
 
     and command (state: State) (program: TCommand) =
@@ -50,16 +56,21 @@ module Interpreter =
             | _ -> bind "TCmp" 0
 
     and cond (state: State) (program: TConditional) =
-            let fwd x = List.fold command state x
-            let flag = try (Map.find "Cmp" state) with | _ -> nan
+        let fwd x = List.fold command state x
 
-            match program with
-            | IfGT cmdList when (flag = 1) -> fwd cmdList
-            | IfGE cmdList when (flag = 1) || (flag = 0) -> fwd cmdList
-            | IfEQ cmdList when (flag = 0) -> fwd cmdList
-            | IfLT cmdList when (flag = -1) -> fwd cmdList
-            | IfLE cmdList when (flag = -1) || (flag = 0) -> fwd cmdList
-            | _ -> state
+        let flag =
+            try
+                (Map.find "Cmp" state)
+            with
+            | _ -> nan
+
+        match program with
+        | IfGT cmdList when (flag = 1) -> fwd cmdList
+        | IfGE cmdList when (flag = 1) || (flag = 0) -> fwd cmdList
+        | IfEQ cmdList when (flag = 0) -> fwd cmdList
+        | IfLT cmdList when (flag = -1) -> fwd cmdList
+        | IfLE cmdList when (flag = -1) || (flag = 0) -> fwd cmdList
+        | _ -> state
 
     let rec interpret (initialState: State) (rootList: TRoot list) =
         let concList =
@@ -120,13 +131,13 @@ module Interpreter =
             acc
             @ [ Conc(specie, System.Random().Next(1, 10)) ]
 
-        speciesSuperSet Set.empty step |>
-        Set.fold speciesSetToConcList []
+        speciesSuperSet Set.empty step
+        |> Set.fold speciesSetToConcList []
 
     let rec customInterpret step =
         function
         | [] -> Seq.empty
-        | cList -> 
-            let rtList = List.append cList [Step step]
-            printf "------------------Step+Conc -------------------------- \n %A \n" rtList
+        | cList ->
+            let rtList = List.append cList [ Step step ]
+            // printf "------------------Step+Conc -------------------------- \n %A \n" rtList
             interpret Map.empty rtList

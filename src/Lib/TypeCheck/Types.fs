@@ -14,6 +14,7 @@ module Types =
         | CyclicStepDependency of TSpecies list
         | ConcStepWrongOrder
         | MultipleComparesInOneStep
+        | SameOutputInStep of TSpecies list
 
     type CheckResult = bool * CrnError list
     type InputOutput = TSpecies list * TSpecies list
