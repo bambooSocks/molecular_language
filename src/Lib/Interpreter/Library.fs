@@ -75,9 +75,9 @@ module Interpreter =
                 | Step s -> Some s
                 | _ -> None)
                 rootList
-
+        // interpreter executes the concs first
         let stateAfterConc = concL initialState concList
-
+        //and then proceeds to the steps, producting an infinite sequence
         let rec interpretSteps (initialState: State) (stpL: TStep List) =
             seq {
                 let state = stepL initialState stepList
@@ -86,7 +86,7 @@ module Interpreter =
             }
 
         interpretSteps stateAfterConc stepList
-
+    // used to generate matching random Concs (initial concentration declaration) given a Step - used in tests
     let concListFromSet step =
 
         let rec speciesSuperSet acc (step: TStep) =
@@ -122,7 +122,8 @@ module Interpreter =
 
         speciesSuperSet Set.empty step |>
         Set.fold speciesSetToConcList []
-
+    
+    // interpret only a single step together with a conclist - used in tests
     let rec customInterpret step =
         function
         | [] -> Seq.empty
