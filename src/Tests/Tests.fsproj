@@ -9,7 +9,6 @@
     <Compile Include="PropertyTests.fs" />
     <Compile Include="TypeCheckTests.fs" />
     <Compile Include="InterpreterTests.fs" />
-    <Compile Include="..\lib\Interpreter\Library.fs" />
     <Compile Include="..\App\Examples.fs" />
   </ItemGroup>
 

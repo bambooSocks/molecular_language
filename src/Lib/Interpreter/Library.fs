@@ -1,4 +1,8 @@
-﻿namespace Interpreter
+﻿(*
+    Author: Andrei Redis
+*)
+
+namespace Interpreter
 
 open Parser.Types
 
@@ -55,60 +59,69 @@ module Interpreter =
             | _ -> state
 
     let rec interpret (initialState: State) (rootList: TRoot list) =
-        let concList = List.choose
-                        (function
-                        | Conc c -> Some c
-                        | _ -> None)
-                        rootList
+        let concList =
+            List.choose
+                (function
+                | Conc c -> Some c
+                | _ -> None)
+                rootList
 
-        let stepList = List.choose
-                        (function
-                        | Step s -> Some s
-                        | _ -> None)
-                        rootList
-                
+        let stepList =
+            List.choose
+                (function
+                | Step s -> Some s
+                | _ -> None)
+                rootList
+
         let stateAfterConc = concL initialState concList
 
-        let rec interpretSteps (initialState: State) (stpL:TStep List) = 
+        let rec interpretSteps (initialState: State) (stpL: TStep List) =
             seq {
-                    let state = stepL initialState stepList
-                    yield state
-                    yield! interpretSteps state stepList
-                }
+                let state = stepL initialState stepList
+                yield state
+                yield! interpretSteps state stepList
+            }
+
         interpretSteps stateAfterConc stepList
-    
-    let concListFromSet step = 
 
-            let rec speciesSuperSet acc (step: TStep) =
+    let concListFromSet step =
 
-                let rec speciesSet acc cmd = 
-                
-                    let add x s = Set.add x s
-                    let fwd x = List.fold speciesSet acc x
-                    
-                    match cmd with
-                    | Module md ->  match md with
-                                    | Ld (A, B) -> add A acc |> add B
-                                    | Add (A, B, C) -> add A acc |> add B |> add C
-                                    | Sub (A, B, C) -> add A acc |> add B |> add C
-                                    | Mul (A, B, C) -> add A acc |> add B |> add C
-                                    | Div (A, B, C) -> add A acc |> add B |> add C
-                                    | Sqrt (A, B) -> add A acc |> add B
-                                    | Cmp (A, B) -> add A acc |> add B
-                    | Conditional cd -> match cd with
-                                        | IfGT cmdList -> fwd cmdList
-                                        | IfGE cmdList -> fwd cmdList
-                                        | IfEQ cmdList -> fwd cmdList
-                                        | IfLT cmdList -> fwd cmdList
-                                        | IfLE cmdList -> fwd cmdList   
-                List.fold speciesSet acc step
-                
-            let speciesSetToConcList acc specie = acc @ [Conc (specie, System.Random().Next (1,10))]
-            let specSet = speciesSuperSet Set.empty step
-            Set.fold speciesSetToConcList [] specSet
+        let rec speciesSuperSet acc (step: TStep) =
 
-    let rec customInterpret step = 
-        function 
+            let rec speciesSet acc cmd =
+
+                let add x s = Set.add x s
+                let fwd x = List.fold speciesSet acc x
+
+                match cmd with
+                | Module md ->
+                    match md with
+                    | Ld (A, B) -> add A acc |> add B
+                    | Add (A, B, C) -> add A acc |> add B |> add C
+                    | Sub (A, B, C) -> add A acc |> add B |> add C
+                    | Mul (A, B, C) -> add A acc |> add B |> add C
+                    | Div (A, B, C) -> add A acc |> add B |> add C
+                    | Sqrt (A, B) -> add A acc |> add B
+                    | Cmp (A, B) -> add A acc |> add B
+                | Conditional cd ->
+                    match cd with
+                    | IfGT cmdList -> fwd cmdList
+                    | IfGE cmdList -> fwd cmdList
+                    | IfEQ cmdList -> fwd cmdList
+                    | IfLT cmdList -> fwd cmdList
+                    | IfLE cmdList -> fwd cmdList
+
+            List.fold speciesSet acc step
+
+        let speciesSetToConcList acc specie =
+            acc
+            @ [ Conc(specie, System.Random().Next(1, 10)) ]
+
+        let specSet = speciesSuperSet Set.empty step
+        Set.fold speciesSetToConcList [] specSet
+
+    let rec customInterpret step =
+        function
         | [] -> Seq.empty
         | cList -> 
             let rtList = List.append cList [Step step]

@@ -1,4 +1,8 @@
-﻿#nowarn "40"
+﻿(*
+    Authors: Matej Majtan, Christopher Acosta, Andrei Redis
+*)
+
+#nowarn "40"
 namespace Parser
 
 open FParsec

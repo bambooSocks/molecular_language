@@ -1,4 +1,8 @@
-﻿namespace ChemicalReactions
+﻿(*
+    Authors: Kristine Maria Klok Jørgensen, Christopher Acosta
+*)
+
+namespace ChemicalReactions
 
 open Parser.Types
 

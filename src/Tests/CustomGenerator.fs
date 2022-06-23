@@ -1,3 +1,7 @@
+(*
+    Author: Matej Majtan
+*)
+
 namespace Tests
 
 #nowarn "40"
