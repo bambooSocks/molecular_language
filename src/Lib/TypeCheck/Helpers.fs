@@ -68,6 +68,22 @@ module Helpers =
          else
              [ CyclicStepDependency cycDep ])
 
+    let checkSameOutputInStep cmds =
+        let repSpecs =
+            getInOutsForCommandList cmds
+            |> snd
+            |> List.groupBy id
+            |> List.choose (fun (key, set) ->
+                if set.Length > 1 then
+                    Some key
+                else
+                    None)
+
+        (repSpecs.IsEmpty,
+         if repSpecs.IsEmpty then
+             []
+         else
+             [ SameOutputInStep repSpecs ]) 
 
     let getConditionals =
         function

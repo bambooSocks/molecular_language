@@ -9,6 +9,7 @@ namespace Tests
 open FsCheck
 open Parser.Types
 open TypeCheck.Helpers
+open TypeCheck.TypeCheck
 
 module CustomGenerator =
 
@@ -68,8 +69,9 @@ module CustomGenerator =
                 let! cmds = 
                     genCommand allowCond false cmd_n
                     |> Gen.where (fun cmds -> 
-                                    let res,_ = checkCyclicDependencyInStep cmds
-                                    res
+                                    let res1 = fst (checkCyclicDependencyInStep cmds)
+                                    let res2 = fst (checkSameOutputInStep cmds)
+                                    res1 && res2
                                  )
                 let! hasCmp = Gen.constant (List.exists isCmp cmds)
                 let! rest = genStep hasCmp (n - 1)
@@ -96,6 +98,7 @@ module CustomGenerator =
     and genModuleCommand excludeCmp =
         gen {
             let! m = genModule excludeCmp
+                     |> Gen.where (fun m -> fst (checkModule m))
             return Module m
         }
 
