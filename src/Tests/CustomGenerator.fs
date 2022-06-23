@@ -32,7 +32,7 @@ module CustomGenerator =
 
     let genSpecies =
         gen {
-            let! i = Gen.choose (5, 6)
+            let! i = Gen.choose (3, 6)
             let! cs = Gen.listOfLength i genChar
             let ss = List.map string cs
             return TSpecies(String.concat "" ss)
@@ -41,7 +41,7 @@ module CustomGenerator =
     let rec genRootList =
         gen {
             let! conc_num = Gen.choose (1, 5)
-            let! step_num = Gen.choose (1, 2)
+            let! step_num = Gen.choose (1, 3)
             let! concs = Gen.listOfLength conc_num genConc
             let! steps = genStep false step_num
             return concs @ steps
@@ -151,7 +151,7 @@ module CustomGenerator =
 
     let genRandomCommands =
         gen {
-            let! n = Gen.choose (1, 3)
+            let! n = Gen.choose (1, 6)
 
             let! allowCond =
                 Gen.oneof [ Gen.constant true

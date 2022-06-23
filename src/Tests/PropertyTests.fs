@@ -25,23 +25,18 @@ module PropertyTests =
             let _ = Arb.register<customGenerator> ()
             ()
 
+        (*
         [<Property>]
         member _.testProp (ast: TCommand list) =
-            printf "^^^^^^^^^^^^^^^^^^^ Original Ast ^^^^^^^^^^^^^^^^^^^^ \n %A \n" ast
             let stepPermutations = permute ast
-            //printf "Permutations -------- \n %A \n" stepPermutations
             let concList = concListFromSet ast
-            //printf "OriginalConcList -------- \n %A \n" concList
             let originalInterpretation = customInterpret ast concList
             let isPermutationEqualToOriginal acc permutedStep =
-                printf ">>>>>>>>>>>>>>>>>>OriginalInterpretation >>>>>>>>>>>>>>>>>> \n %A \n" (List.ofSeq (Seq.take 4 originalInterpretation))
                 let permutedStepInterpretation = customInterpret permutedStep concList
-                printf "------------------PermutedStepInterpretation -------------------------- \n %A \n" (List.ofSeq (Seq.take 4 permutedStepInterpretation))
-                let boo = (List.ofSeq (Seq.take 4 originalInterpretation)) = (List.ofSeq (Seq.take 4 permutedStepInterpretation))
-                printf "------------------Boolean -------------------------- \n %A \n" boo
+                let boo = (List.ofSeq (Seq.take 100 originalInterpretation)) = (List.ofSeq (Seq.take 100 permutedStepInterpretation))
                 acc && boo
             List.fold isPermutationEqualToOriginal true stepPermutations
-            // Permutations can cause Conditionals before modules
+        *)
 
         [<Property>]
         member _.crnParserProperty ast =
