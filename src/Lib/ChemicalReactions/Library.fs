@@ -9,21 +9,26 @@ open Parser.Types
 module Simulator = 
     let product = List.fold (*) 1.0
 
+    // Get concentration of species s in state st
     let stateGet s st =
         if Map.containsKey s st
         then Map.find s st
-        else printfn "%A" s
+        else printfn "%A" s // Get info for exception
              Map.find s st
 
+    // Add net change of concentration dc to concentration s in state st
     let stateAddConc s dc st =
         let c = stateGet s st
         Map.add s (c + dc) st
 
+    // Compute the numbero of times a given species s appears in the expression ss (lhs or rhs of a reaction)
     let multiplicity s ss = List.length (List.filter (fun x -> x = s) ss)
 
+    // Compute the net change of a species in a reaction
     let speciesNetChange s (Rxn (rs, ps, _)) = 
         multiplicity s ps - multiplicity s rs
 
+    // Compute the net change d[S] of a given species
     let concNetChange crn st s dt =
         let calcTerm (rxn as Rxn (rs, _, rate)) =
             let sNetChange = float (speciesNetChange s rxn)
@@ -31,18 +36,22 @@ module Simulator =
             rate * sNetChange * multiplicityProduct * dt
         List.sum (List.map calcTerm crn)
 
+    // Perform a single step in the simulation.
     let step crn st ss dt =
         let netChanges = List.map (fun s -> (s, concNetChange crn st s dt)) ss
         List.fold (fun st' (s, netChange) -> stateAddConc s netChange st') st netChanges
 
+    // Get a list of all species involved in the given CRN
     let crnSpecies crn = List.fold (fun acc (Rxn(ps, rs, _)) -> Set.union acc (Set.ofList (ps @ rs))) Set.empty crn 
 
+    // Generate an infinite sequence of states
     let rec simulate crn st ss dt =
         seq {
             yield st
             let st' = step crn st ss dt
             yield! simulate crn st' ss dt }
 
+    // Simulate the first N states
     let simulateN crn st dt n =
         let ss = Set.toList (crnSpecies crn)
         simulate crn st ss dt |> Seq.take n |> Seq.toList
