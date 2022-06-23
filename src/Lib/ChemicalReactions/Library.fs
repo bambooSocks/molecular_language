@@ -48,6 +48,7 @@ module Simulator =
         simulate crn st ss dt |> Seq.take n |> Seq.toList
 
 module Samples =
+    // CRNs from the paper along with example initial concentrations.
     let crn1s0 = Map.ofList [("a", 6.0); ("b", 2.0); ("c", 0.0)]
     let crn1 =
         let rxn1 = Rxn (["a"; "b"], ["a"; "b"; "c"], 1)
