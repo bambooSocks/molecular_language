@@ -241,4 +241,6 @@ module modulesToReactions =
             |> List.filter (fun o -> o.IsSome)
             |> List.map (fun o -> o.Value)
         
-        stepsToCrns cmdLists 3 // Start with oscillator species number 3
+        let (reactions, oscCount) = stepsToCrns cmdLists 3 // Start with oscillator species number 3
+        let oscCount' = oscCount - 3
+        (reactions @ genOscCrn "osc" oscCount', oscCount') // Add oscillator CRN

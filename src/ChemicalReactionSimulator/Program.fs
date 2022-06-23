@@ -7,6 +7,17 @@ open FParsec
 open Parser.Parser
 open ChemicalReactions.Samples
 open Drawing 
+open ChemicalReactions.modulesToReactions
+open Parser.Types
+
+// ********************************
+// Helper functions
+let rec intersperse i = function
+    | [] -> []
+    | [x] -> [x]
+    | x::xs -> x :: i :: intersperse i xs
+
+let concatStrs (xs : string list) = List.fold (fun acc s -> acc + s) "" xs
 
 let crn1res = simulateN crn1 crn1s0 0.01 1500
 let crn2res = simulateN crn9 crn9s0 0.01 5000
@@ -20,7 +31,114 @@ let crn7res = simulateN crn7 crn7s0 0.001 1000
 let speciesConcs species states = List.map (Map.find species) states
 let drawStates res =
     drawSteps (List.map (fun s -> (speciesConcs s res, s)) (Seq.toList <| Map.keys res[0]))
+let oscs x n = List.map (fun i -> (x + string i, 1.0 + 0.1 * float i)) [1..n]
+let zeroconcs xs = List.map (fun s -> (s, 0.0)) xs
+let speciesFromRxns rxns =
+    let speciesFromRxn (Rxn (rs, ps, _)) = Set.ofList (rs @ ps)
+    List.fold (fun acc rxn -> Set.union acc (speciesFromRxn rxn)) Set.empty rxns
 
+let reactionsOutput reactions =
+    let reactionToStr (Rxn (rs, ps, k)) =
+        let lhs = concatStrs <| intersperse " + " rs
+        let rhs = concatStrs <| intersperse " + " ps
+        "rxn[" + lhs + ", " + rhs + ", " + string k + "]"
+    concatStrs <| intersperse ",\n" (List.map reactionToStr reactions)
+
+let parseSimulateDraw src =
+    let parseResult = runRxnParser src
+    match parseResult with
+    | Success (rxns, _, _) ->
+        printfn "Parsing succeeded:%A" rxns
+        let states = simulateN rxns crn1s0 0.01 1000
+        drawStates states
+    | Failure (err, _, _) -> printfn "PARSING FAILED:\n%A" err
+// ********************************
+
+
+// ********************************
+// Compiling
+let gcd =
+    """
+    crn = {
+        conc[a,32],
+        conc[b,12],
+        step[{
+            ld [a, atmp],
+            ld [b, btmp],
+            cmp[a,b]
+        }],
+        step[{
+            ifGT[{ sub[atmp,btmp,a] }],
+            ifLT[{ sub[btmp,atmp,b] }]
+        }]
+    };
+    """
+let (Success (ast, _, _)) = runCrnParser gcd
+let (reactions, oscCount) = toReactionNetwork ast
+//printfn "%A" reactions
+//printfn "%A" (reactionsOutput reactions)
+// ********************************
+
+// ********************************
+// Parsing GCD reactions
+let rs' = """
+rxn[osc3 + a, osc3 + a + atmp, 1],
+rxn[osc3 + atmp, osc3, 1],
+rxn[osc3 + b, osc3 + b + btmp, 1],
+rxn[osc3 + btmp, osc3, 1],
+rxn[osc3 + cmpGT + b, osc3 + cmpLT + b, 1],
+rxn[osc3 + cmpLT + a, osc3 + cmpGT + a, 1],
+rxn[osc6 + cmpGT + cmpLT, osc6 + cmpLT + cmpB, 1],
+rxn[osc6 + cmpB + cmpLT, osc6 + cmpLT + cmpLT, 1],
+rxn[osc6 + cmpLT + cmpGT, osc6 + cmpGT + cmpB, 1],
+rxn[osc6 + cmpB + cmpGT, osc6 + cmpGT + cmpGT, 1],
+rxn[osc9 + cmpLT + btmp, osc9 + cmpLT + btmp + b, 1],
+rxn[osc9 + cmpLT + atmp, osc9 + cmpLT + atmp + hbtmpatmpb, 1],
+rxn[osc9 + cmpLT + b, osc9 + cmpLT, 1],
+rxn[osc9 + cmpLT + b + hbtmpatmpb, osc9 + cmpLT, 1],
+rxn[osc9 + cmpGT + atmp, osc9 + cmpGT + atmp + a, 1],
+rxn[osc9 + cmpGT + btmp, osc9 + cmpGT + btmp + hatmpbtmpa, 1],
+rxn[osc9 + cmpGT + a, osc9 + cmpGT, 1],
+rxn[osc9 + cmpGT + a + hatmpbtmpa, osc9 + cmpGT, 1],
+rxn[osc1 + osc2, osc2 + osc2, 1],
+rxn[osc2 + osc3, osc3 + osc3, 1],
+rxn[osc3 + osc4, osc4 + osc4, 1],
+rxn[osc4 + osc5, osc5 + osc5, 1],
+rxn[osc5 + osc6, osc6 + osc6, 1],
+rxn[osc6 + osc7, osc7 + osc7, 1],
+rxn[osc7 + osc8, osc8 + osc8, 1],
+rxn[osc8 + osc9, osc9 + osc9, 1],
+rxn[osc9 + osc1, osc1 + osc1, 1]
+"""
+let ( Success (res, _, _) )= runRxnParser rs'
+printfn "%A" res
+// ********************************
+
+// ********************************
+// Simulating
+let initialState concDecls =
+    let species = Set.toList (speciesFromRxns reactions)
+    let m = Map.ofList (List.map (fun species -> (species, 0.5)) species)
+    let cmpConcs = if List.contains "cmpGT" species then [("cmpGT", 0.5); ("cmpLT", 0.5)] else []
+    let rest = List.map (fun s -> (s, 0.0))
+        <| List.filter (fun s -> s <> "cmpGT" && s <> "cmpLT" && not (List.contains s species) && not (s.Contains "osc"))
+    List.fold (fun m (s, c) -> Map.add s c m) m (concDecls @ cmpConcs @ oscs "osc" 9)
+//printfn "%A" species
+printfn "%A" (Map.toList (initialState [("a", 32.0); ("b", 12.0)]))
+
+
+let initialState' =
+    Map.ofList [("a", 32.0); ("atmp", 0.0); ("b", 12.0); ("btmp", 0.0); ("cmpB", 0.0);
+    ("cmpGT", 0.5); ("cmpLT", 0.5); ("hatmpbtmpa", 0.0); ("hbtmpatmpb", 0.0);
+    ("osc1", 1.0); ("osc2", 0.01); ("osc3", 0.01); ("osc4", 0.01); ("osc5", 0.01);
+    ("osc6", 0.01); ("osc7", 0.01); ("osc8", 0.01); ("osc9", 0.01)]
+
+let crnresult = simulateN reactions initialState' 0.1 5000
+//drawStates crnresult
+// ********************************
+    
+// ********************************
+// Simulating CRNs from paper
 // let crn1res = simulateN crn1 crn1s0 0.01 1500
 // let crn2res = simulateN crn9 crn9s0 0.01 5000
 // let ldcrnres = simulateN ldcrn ldcrns0 0.01 1000
@@ -41,65 +159,4 @@ let drawStates res =
 //drawStates divcrnres
 //drawStates sqrtcrnres
 //printfn "%A" crn7res
-
-let oscs x n = List.map (fun i -> (x + string i, 1.0 + 0.1 * float i)) [1..n]
-let zeroconcs xs = List.map (fun s -> (s, 0.0)) xs
-
-let parseSimulateDraw src =
-    let parseResult = runRxnParser src
-    match parseResult with
-    | Success (rxns, _, _) ->
-        printfn "Parsing succeeded:%A" rxns
-        let states = simulateN rxns crn1s0 0.01 1000
-        drawStates states
-    | Failure (err, _, _) -> printfn "PARSING FAILED:\n%A" err
-
-let rs = "rxn[a + b, a + b + c, 1], rxn[c, , 1]"
-//let parseResult = parseSimulateDraw rs
-
-let gcd =
-        """
-        crn = {
-            conc[a,32],
-            conc[b,12],
-            step[{
-                ld [a, atmp],
-                ld [b, btmp],
-                cmp[a,b]
-            }],
-            step[{
-                ifGT[{ sub[atmp,btmp,a] }],
-                ifLT[{ sub[btmp,atmp,b] }]
-            }]
-        };
-        """
-
-open ChemicalReactions.modulesToReactions
-open Parser.Types
-
-let (Success (ast, _, _)) = runCrnParser gcd
-//printfn "%A" ast
-
-
-let speciesFromRxns rxns =
-    let speciesFromRxn (Rxn (rs, ps, _)) = Set.ofList (rs @ ps)
-    List.fold (fun acc rxn -> Set.union acc (speciesFromRxn rxn)) Set.empty rxns
-let (reactions, _) = toReactionNetwork ast
-let species = Set.toList (speciesFromRxns reactions)
-let initialState =
-    let m = Map.ofList (List.map (fun species -> (species, 0.5)) species)
-    List.fold (fun m (s, c) -> Map.add s c m) m ([("a", 32.0); ("b", 12.0)] @ oscs "osc" 9)
-//printfn "%A" species
-printfn "%A" (Map.toList initialState)
-
-let reactionsWithOscs = reactions @ genOscCrn "osc" 9
-printfn "%A" reactionsWithOscs
-
-let initialState' =
-    Map.ofList [("a", 32.0); ("atmp", 0.0); ("b", 12.0); ("btmp", 0.0); ("cmpB", 0.0);
-    ("cmpGT", 0.5); ("cmpLT", 0.5); ("hatmpbtmpa", 0.0); ("hbtmpatmpb", 0.0);
-    ("osc1", 1.0); ("osc2", 0.01); ("osc3", 0.01); ("osc4", 0.01); ("osc5", 0.01);
-    ("osc6", 0.01); ("osc7", 0.01); ("osc8", 0.01); ("osc9", 0.01)]
-
-let crnresult = simulateN reactionsWithOscs initialState' 0.1 5000
-drawStates crnresult
+// ********************************
