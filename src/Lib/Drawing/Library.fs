@@ -6,7 +6,7 @@ module Drawing
 
 open Plotly.NET
 
-let draw style stepList =
+let draw style stateList =
     let makePlot list (steps, name) =
         let xs =
             seq {
@@ -24,7 +24,7 @@ let draw style stepList =
 
         plot' :: list
 
-    Chart.combine (List.fold makePlot [] stepList)
+    Chart.combine (List.fold makePlot [] stateList)
     |> Chart.show
 
 let speciesConcs species states = List.map (Map.find species) states
