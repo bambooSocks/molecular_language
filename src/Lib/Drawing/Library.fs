@@ -3,7 +3,7 @@ module Drawing
 
 open Plotly.NET
 
-let draw style stepList =
+let draw style stateList =
     let makePlot list (steps, name) = 
         let xs = seq{for i in 0.0 .. List.length steps do yield i}
         let plot = Chart.Line(xs, steps, Name=name)
@@ -12,7 +12,7 @@ let draw style stepList =
                     | "step" -> Chart.withLineStyle(Shape = StyleParam.Shape.Hvh) plot
                     | s -> failwith "not a drawing option"
         plot' :: list
-    Chart.combine (List.fold makePlot [] stepList) |> Chart.show
+    Chart.combine (List.fold makePlot [] stateList) |> Chart.show
 
 let speciesConcs species states = List.map (Map.find species) states
 
