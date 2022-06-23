@@ -30,6 +30,7 @@ let parseCheckExecute src =
     | Failure (err, _, _) -> printfn "PARSING FAILED:\n%s\n" err
 
 
+printfn "osccount %A" (computeOscCount [ "osc1"; "osc2"; "osc3"])
 [<EntryPoint>]
 let main a =
     let args = List.ofArray a
@@ -41,8 +42,9 @@ let main a =
         match runRxnParser gcdReactions with
         | Success (reactions, _, _) ->
             printfn "Parsed reactions successfully."
-            let initialState = Map.empty
-            let statesSeq = simulateN reactions initialState 0.01 2000
+            let oscCount = computeOscCount (speciesFromRxns reactions)
+            let initialState = computeInitialState reactions [("a", 32.0); ("b", 12.0)] oscCount
+            let statesSeq = simulateN reactions initialState 0.01 5000
             drawStates statesSeq
         | Failure (err, _, _) -> printfn "Error when parsing reactions:\n%s" err
     else if List.contains "compile" args then

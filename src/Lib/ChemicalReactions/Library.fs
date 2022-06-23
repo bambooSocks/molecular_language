@@ -189,13 +189,20 @@ module modulesToReactions =
     // Compute the set of all species involved in a CRN.
     let speciesFromRxns rxns =
         let speciesFromRxn (Rxn (rs, ps, _)) = Set.ofList (rs @ ps)
-        List.fold (fun acc rxn -> Set.union acc (speciesFromRxn rxn)) Set.empty rxns
+        Set.toList <| List.fold (fun acc rxn -> Set.union acc (speciesFromRxn rxn)) Set.empty rxns
 
     // Generate initial concentrations of oscillator species 1..n
-    let initialOscs x n = List.map (fun i -> (x + string i, if i = 1 then 1.0 else 0.01)) [1..n]
+    let initialOscs x n = List.map (fun i -> (x + string i, 1.0 + 0.1 * float i)) [1..n]
 
+    // Compute the number of oscillator species in the given CRN
+    let computeOscCount species =
+        if List.isEmpty species then 0 else
+        let oscs = List.filter (fun (s : TSpecies) -> s.Contains "osc") species
+        let hd = List.last (List.sort oscs)
+        int (hd.Substring 3)
+    // Compute all initial concentrations in CRN
     let computeInitialState reactions concDecls oscCount =
-        let species = Set.toList (speciesFromRxns reactions)
+        let species = speciesFromRxns reactions
         printfn "%A" species
         let m = Map.ofList (List.map (fun species -> (species, 0.0)) species)
         let cmpConcs = if List.contains "cmpGT" species then [("cmpGT", 0.5); ("cmpLT", 0.5); ("cmpB", 0.0)] else []
