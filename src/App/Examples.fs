@@ -115,7 +115,11 @@ module Examples =
             conc[one, 1], conc[n, n0],
             step [{
                 add[z, one, znext],
+            }], 
+            step [{
                 mul[znext, znext, zpow],
+            }], 
+            step [{
                 cmp[zpow, n]
             }], 
             step [{
