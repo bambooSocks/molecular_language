@@ -8,6 +8,8 @@ open Drawing
 open TypeCheck.TypeCheck
 open App.Examples
 open FParsec
+open ChemicalReactions.modulesToReactions
+
 
 let parseCheckExecute src =
     let parserResult = runCrnParser src //Parse program
