@@ -11,13 +11,6 @@ open ChemicalReactions.modulesToReactions
 open Parser.Types
 
 // ********************************
-// Helper functions
-let rec intersperse i = function
-    | [] -> []
-    | [x] -> [x]
-    | x::xs -> x :: i :: intersperse i xs
-
-let concatStrs (xs : string list) = List.fold (fun acc s -> acc + s) "" xs
 
 let crn1res = simulateN crn1 crn1s0 0.01 1500
 let crn2res = simulateN crn9 crn9s0 0.01 5000
