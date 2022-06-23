@@ -192,7 +192,7 @@ module modulesToReactions =
         Set.toList <| List.fold (fun acc rxn -> Set.union acc (speciesFromRxn rxn)) Set.empty rxns
 
     // Generate initial concentrations of oscillator species 1..n
-    let initialOscs x n = List.map (fun i -> (x + string i, 1.0 + 0.1 * float i)) [1..n]
+    let initialOscs x n = List.map (fun i -> (x + string i, if i = 1 then 1.0 else 0.001)) [1..n]
 
     // Compute the number of oscillator species in the given CRN
     let computeOscCount species =

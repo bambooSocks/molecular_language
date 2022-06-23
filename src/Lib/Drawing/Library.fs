@@ -24,7 +24,7 @@ let draw style stateList =
 
         plot' :: list
 
-    Chart.combine (List.fold makePlot [] stateList)
+    Chart.combine (List.fold makePlot [] (List.filter (fun (steps, name) -> if name.Contains "osc" || name.Contains "tmp" || name.Contains "cmp"  then false else true) stateList))
     |> Chart.show
 
 let speciesConcs species states = List.map (Map.find species) states
