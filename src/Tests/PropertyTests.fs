@@ -1,4 +1,8 @@
-﻿namespace Tests
+﻿(*
+    Author: Matej Majtan, Andrei Redis, Kristine Maria Klok Jørgensen
+*)
+
+namespace Tests
 
 open NUnit.Framework
 open FsCheck

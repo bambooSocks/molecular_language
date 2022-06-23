@@ -1,3 +1,7 @@
+(*
+    Author: Matej Majtan
+*)
+
 namespace TypeCheck
 
 open Parser.Types

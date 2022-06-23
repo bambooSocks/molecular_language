@@ -1,4 +1,8 @@
-﻿open ChemicalReactions.Simulator
+﻿(*
+    Author: Christopher Acosta
+*)
+
+open ChemicalReactions.Simulator
 open FParsec
 open Parser.Parser
 open ChemicalReactions.Samples

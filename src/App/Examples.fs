@@ -1,3 +1,7 @@
+(*
+    Authors: Matej Majtan, Andrei Redis
+*)
+
 namespace App
 
 module Examples =
@@ -142,4 +146,3 @@ module Examples =
 
     let small2 =
         "crn = { conc[a, 32], conc[b, 12], step[{ ifGT[{ sub[atmp,btmp,a] }] }] };"
-

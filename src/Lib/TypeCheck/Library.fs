@@ -1,4 +1,8 @@
-﻿namespace TypeCheck
+﻿(*
+    Author: Matej Majtan
+*)
+
+namespace TypeCheck
 
 open Parser.Types
 open TypeCheck.Helpers

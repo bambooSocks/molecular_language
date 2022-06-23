@@ -1,4 +1,8 @@
-﻿namespace Tests
+﻿(*
+    Author: Matej Majtan
+*)
+
+namespace Tests
 
 open NUnit.Framework
 
