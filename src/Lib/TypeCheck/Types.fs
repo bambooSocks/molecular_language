@@ -1,3 +1,7 @@
+(*
+    Author: Matej Majtan
+*)
+
 namespace TypeCheck
 
 open Parser.Types
@@ -9,6 +13,7 @@ module Types =
         | CyclicModuleDependency of TModule
         | CyclicStepDependency of TSpecies list
         | ConcStepWrongOrder
+        | MultipleComparesInOneStep
 
     type CheckResult = bool * CrnError list
     type InputOutput = TSpecies list * TSpecies list

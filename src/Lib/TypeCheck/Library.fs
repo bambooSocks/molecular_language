@@ -1,4 +1,8 @@
-﻿namespace TypeCheck
+﻿(*
+    Author: Matej Majtan
+*)
+
+namespace TypeCheck
 
 open Parser.Types
 open TypeCheck.Helpers
@@ -19,7 +23,11 @@ module TypeCheck =
         | Conc c -> checkNegativeConcentration c
         | Step cmds ->
             let noCycDep = checkCyclicDependencyInStep cmds
-            combineResults noCycDep (checkMultiple checkCommand cmds)
+            let noMultipleCmp = checkMultipleCmpInStep cmds
+
+            checkMultiple checkCommand cmds
+            |> combineResults noCycDep
+            |> combineResults noMultipleCmp
 
     and checkCommand =
         function

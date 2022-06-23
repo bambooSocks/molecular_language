@@ -1,3 +1,7 @@
+(*
+    Authors: Matej Majtan, Christopher Acosta
+*)
+
 namespace Parser
 
 module Types =

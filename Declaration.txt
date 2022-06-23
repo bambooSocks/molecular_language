@@ -1,0 +1,49 @@
+The declaration of contribution to the project - Group 7
+
+Date: 23 June 2022
+
+Members:
+Kristine Maria Klok Jørgensen - s194583
+Christopher Acosta - s194569
+Matej Majtan - s184457
+Andrei Redis - s164572
+
+Report contribution:
+    Abstract - Kristine Maria Klok Jørgensen
+    Section 1 - Matej Majtan
+    Subsection 1.1 - Christopher Acosta
+    Subsection 2.1 - Kristine Maria Klok Jørgensen
+    Subsection 2.2 - Andrei Redis
+    Subsection 2.3 - Christopher Acosta
+    Subsection 2.4 - Christopher Acosta
+    Subsection 2.5 - Andrei Redis
+    Subsection 2.6 - Kristine Maria Klok Jørgensen
+    Section 3 - Matej Majtan
+    Section 4 - Andrei Redis
+
+Program contribution:
+Detailed contribution to the source code can be found in comments on top of each file.
+
+    An interpreter for CRN++:
+    The parser was developed mainly by Matej Majtan and Christopher Acosta. The type checking was done by Matej Majtan and the interpreter was implemented by Andrei Redis. The visualization was done by Kristine Maria Klok Jørgensen.
+
+    Chemical reactions:
+    The parser for chemical reactions was done by Christopher Acosta. The simulator was also done by Christopher Acosta. The visualization was done by Kristine Maria Klok Jørgensen.
+
+    Compiling CRN++ to chemical reactions:
+    The compiler was developed by Christopher Acosta and Kristine Maria Klok Jørgensen.
+
+    Tests project:
+    The property tests were distributed as follows:
+        Parser properties - Matej Majtan
+        Semantic properties - Matej Majtan
+        Parallel command execution property - Andrei Redis
+        Interpreter and compiler comparison property - Kristine Maria Klok Jørgensen
+
+    The unit test were distributed as follows:
+        Type Checker tests - Matej Majtan
+        Interpreter tests - Kristine Maria Klok Jørgensen
+        
+    The abstract syntax tree generator was developed by Matej Majtan.
+
+

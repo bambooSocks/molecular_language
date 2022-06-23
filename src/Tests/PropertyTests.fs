@@ -1,4 +1,8 @@
-﻿namespace Tests
+﻿(*
+    Author: Matej Majtan, Andrei Redis, Kristine Maria Klok Jørgensen
+*)
+
+namespace Tests
 
 open NUnit.Framework
 open FsCheck
@@ -69,6 +73,11 @@ module PropertyTests =
         [<Property>]
         member _.noNegativeConcentrationProperty(conc: TConc) =
             let res, _ = checkNegativeConcentration conc
+            res
+
+        [<Property>]
+        member _.noMultipleCmpInStepProperty(cmds: TCommand list) =
+            let res, _ = checkMultipleCmpInStep cmds
             res
 
         [<Property>]

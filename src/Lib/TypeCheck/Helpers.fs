@@ -1,3 +1,7 @@
+(*
+    Author: Matej Majtan
+*)
+
 namespace TypeCheck
 
 open Parser.Types
@@ -64,6 +68,7 @@ module Helpers =
          else
              [ CyclicStepDependency cycDep ])
 
+
     let getConditionals =
         function
         | Conditional c -> Some c
@@ -87,6 +92,18 @@ module Helpers =
             | (_) :: rs -> checkConcStepOrder' foundStep rs
 
         checkConcStepOrder' false rs
+
+    let checkMultipleCmpInStep cmds =
+        let notMultipleCmp =
+            List.filter containsCmp cmds
+            |> List.length
+            |> (>) 2
+
+        (notMultipleCmp,
+         if notMultipleCmp then
+             []
+         else
+             [ MultipleComparesInOneStep ])
 
     let checkMissingCmp rs =
         let rec checkMissingCmp' cmpBefore =
@@ -136,3 +153,4 @@ module Helpers =
         | CyclicStepDependency specs ->
             sprintf "Cyclic dependency of variable(s): %A in step" (String.concat ", " specs)
         | ConcStepWrongOrder -> "Concentration declaration cannot be after a step declaration"
+        | MultipleComparesInOneStep -> "There can be only one compare module in a step declaration"

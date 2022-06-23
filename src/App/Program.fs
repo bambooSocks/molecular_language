@@ -1,9 +1,15 @@
-﻿open Parser.Parser
+﻿(*
+    Authors: Christopher Acosta, Matej Majtan
+*)
+
+open Parser.Parser
 open Interpreter.Interpreter
 open Drawing
 open TypeCheck.TypeCheck
 open App.Examples
 open FParsec
+open ChemicalReactions.modulesToReactions
+
 
 let parseCheckExecute src =
     let parserResult = runCrnParser src //Parse program
@@ -23,16 +29,17 @@ let parseCheckExecute src =
         | errs -> printErrors errs
     | Failure (err, _, _) -> printfn "PARSING FAILED:\n%s\n" err
 
-// Parse and interpret a CRN program
-parseCheckExecute gcd 
 
+[<EntryPoint>]
+let main a =
+    let args = List.ofArray a
 
-// -------------- DRAWING EXAMPLES --------------------
-// Draw States
-// drawStates: Map<Species * float) list ->
-// drawStates (Seq.toList (Seq.take 10 seq{Map<Species,, float>}))
+    if List.contains "interpreter" args then
+        // Parse and interpret a CRN program
+        parseCheckExecute gcd
+    else if List.contains "simulator" args then
+        printfn "Running sim"
+    else
+        printfn "Wrong command"
 
-// Draw
-// draw drawingParam stepList
-// drawingParam = "smooth"; "step"
-// ----------------------------------------------------
+    0

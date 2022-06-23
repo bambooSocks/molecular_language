@@ -1,3 +1,7 @@
+(*
+    Authors: Matej Majtan, Kristine Maria Klok Jørgensen, Andrei Redis
+*)
+
 namespace Tests
 
 open Parser.Types
@@ -52,43 +56,53 @@ module Helpers =
 
 
 
-    let mapCmp (a: State) (b: State) = Map.fold (fun acc key aval -> match Map.tryFind key b with 
-                                                                            | Some bval when bval = aval -> true
-                                                                            | _ -> false
-                                                                            ) true a
+    let mapCmp (a: State) (b: State) =
+        Map.fold
+            (fun acc key aval ->
+                match Map.tryFind key b with
+                | Some bval when bval = aval -> true
+                | _ -> false)
+            true
+            a
 
-    let pairwiseCmp seq1 seq2 =  Seq.fold2 (fun acc a b -> mapCmp a b && mapCmp b a) true seq1 seq2
+    let pairwiseCmp seq1 seq2 =
+        Seq.fold2 (fun acc a b -> mapCmp a b && mapCmp b a) true seq1 seq2
 
-    let extractInitial (rootList: TRoot list) = 
-        let extractInitial' acc rl = 
+    let extractInitial (rootList: TRoot list) =
+        let extractInitial' acc rl =
             match rl with
-            | Conc(tConc) :: xs -> acc @ [tConc]
+            | Conc (tConc) :: xs -> acc @ [ tConc ]
             | _ -> acc
+
         Map.ofList (extractInitial' [] rootList)
 
     let rec customFold f acc xs ys =
-            match xs, ys with 
-            | [],[] ->  acc
-            | x::xs, y::ys -> customFold f (f acc x y) xs ys
-            | _, [] -> false
-            | [], _ -> false
+        match xs, ys with
+        | [], [] -> acc
+        | x :: xs, y :: ys -> customFold f (f acc x y) xs ys
+        | _, [] -> false
+        | [], _ -> false
 
     let compareCustom ast1 ast2 =
-        let eqWithError x y = abs (x-y) < 0.5
+        let eqWithError x y = abs (x - y) < 0.5
 
         let rec concL acc ast1 ast2 =
             match ast1, ast2 with
             | [], [] -> acc
             | concList1, conclist2 -> customFold conc acc concList1 conclist2
 
-        and conc acc (species1, number1) (species2, number2) = acc && (species1 = species2) && (eqWithError number1 number2)
+        and conc acc (species1, number1) (species2, number2) =
+            acc
+            && (species1 = species2)
+            && (eqWithError number1 number2)
 
         let rec stepL acc ast1 ast2 =
             match ast1, ast2 with
             | [], [] -> acc
             | stepList1, stepList2 -> customFold step acc stepList1 stepList2
 
-        and step acc commList1 commList2 = customFold command acc commList1 commList2
+        and step acc commList1 commList2 =
+            customFold command acc commList1 commList2
 
         and command acc ast1 ast2 =
             match ast1, ast2 with
@@ -98,7 +112,7 @@ module Helpers =
 
         and mdl acc ast1 ast2 =
             match ast1, ast2 with
-            | Ld (A, B), Ld (A', B') -> acc && (A = A') && (B = B') 
+            | Ld (A, B), Ld (A', B') -> acc && (A = A') && (B = B')
             | Add (A, B, C), Add (A', B', C') -> acc && (A = A') && (B = B') && (C = C')
             | Sub (A, B, C), Sub (A', B', C') -> acc && (A = A') && (B = B') && (C = C')
             | Mul (A, B, C), Mul (A', B', C') -> acc && (A = A') && (B = B') && (C = C')
@@ -110,7 +124,7 @@ module Helpers =
         and cond acc ast1 ast2 =
             let fwd xs ys = customFold command acc xs ys
 
-            match ast1,ast2 with
+            match ast1, ast2 with
             | IfGT cmdList, IfGT cmdList' -> fwd cmdList cmdList'
             | IfGE cmdList, IfGE cmdList' -> fwd cmdList cmdList'
             | IfEQ cmdList, IfEQ cmdList' -> fwd cmdList cmdList'
@@ -118,37 +132,45 @@ module Helpers =
             | IfLE cmdList, IfLE cmdList' -> fwd cmdList cmdList'
             | _ -> false
 
-        let concList rootList = List.choose
-                                    (function
-                                    | Conc c -> Some c
-                                    | _ -> None)
-                                    rootList
+        let concList rootList =
+            List.choose
+                (function
+                | Conc c -> Some c
+                | _ -> None)
+                rootList
 
-        let stepList rootList = List.choose
-                                    (function
-                                    | Step s -> Some s
-                                    | _ -> None)
-                                    rootList
-        
+        let stepList rootList =
+            List.choose
+                (function
+                | Step s -> Some s
+                | _ -> None)
+                rootList
 
-        (stepL true (stepList ast1) (stepList ast2)) && (concL true (concList ast1) (concList ast2))
 
-    let rec permute list = 
-        let rec distribute e = function
-            | [] -> [[e]]
-            | x::xs' as xs -> (e::xs)::[for xs in distribute e xs' -> x::xs]
+        (stepL true (stepList ast1) (stepList ast2))
+        && (concL true (concList ast1) (concList ast2))
+
+    let rec permute list =
+        let rec distribute e =
+            function
+            | [] -> [ [ e ] ]
+            | x :: xs' as xs ->
+                (e :: xs)
+                :: [ for xs in distribute e xs' -> x :: xs ]
 
         match list with
-        | [] -> [[]]
-        | e::xs -> List.collect (distribute e) (permute xs)
+        | [] -> [ [] ]
+        | e :: xs -> List.collect (distribute e) (permute xs)
 
-    let isStep acc troot = match troot with
-                                | Step(x) -> acc @ [x]
-                                | _ -> acc
+    let isStep acc troot =
+        match troot with
+        | Step (x) -> acc @ [ x ]
+        | _ -> acc
 
-    let rec extractConc troot = match troot with
-                                | Conc(s, c) -> s, c
-                                | _ -> failwith "Not a conc"
+    let rec extractConc troot =
+        match troot with
+        | Conc (s, c) -> s, c
+        | _ -> failwith "Not a conc"
 
 
 
@@ -164,9 +186,10 @@ module Helpers =
                 let resultingStates = Seq.head (interpret (Map.ofList []) ast) //Interpret program
 
                 //printf "%A" resultingStates
-                
+
                 mapCmp expected resultingStates
 
             | _ -> false
-        | Failure (err, _, _) -> printfn "PARSING FAILED:\n%s\n" err
-                                 false
+        | Failure (err, _, _) ->
+            printfn "PARSING FAILED:\n%s\n" err
+            false

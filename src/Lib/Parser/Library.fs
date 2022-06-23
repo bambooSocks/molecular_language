@@ -1,4 +1,8 @@
-﻿#nowarn "40"
+﻿(*
+    Authors: Matej Majtan, Christopher Acosta, Andrei Redis
+*)
+
+#nowarn "40"
 namespace Parser
 
 open FParsec
@@ -9,25 +13,23 @@ module Parser =
     let symbol s = token (pstring s)
     let pFloat: Parser<float, unit> = token pfloat
 
-    let runRxnParser s =
-        let pSpecies: Parser<string, unit> = token (many1SatisfyL isLetter "species")
+    let runRxnParser s = 
+        let isLetterOrDigit x = isLetter x || isDigit x
+        let pSpecies: Parser<string, unit> = token (many1Satisfy2L isLetter isLetterOrDigit "species")
         let pExpr = sepBy pSpecies (symbol "+")
 
         let pRxn =
-            parse {
-                let! _ = symbol "rxn"
-                let! _ = symbol "["
-                let! reactants = pExpr
-                let! _ = symbol ","
-                let! products = pExpr
-                let! _ = symbol ","
-                let! n = pfloat
-                let! _ = symbol "]"
-                return Rxn(reactants, products, n)
-            }
-
-        let pRxns = sepBy1 pRxn (symbol ",")
-        run pRxns s
+            parse { let! _ = symbol "rxn"
+                    let! _ = symbol "["
+                    let! reactants = pExpr
+                    let! _ = symbol ","
+                    let! products = pExpr
+                    let! _ = symbol ","
+                    let! n = pfloat
+                    let! _ = symbol "]"
+                    return Rxn (reactants, products, n) }
+        let pRxns = sepBy1 pRxn  (symbol ",") 
+        run (spaces >>. pRxns) s
 
     let runCrnParser s =
         let pFloat: Parser<float, unit> = token pfloat
