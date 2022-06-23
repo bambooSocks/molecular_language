@@ -10,7 +10,7 @@ Andrei Redis - s164572
 
 Report contribution:
     Abstract - Kristine Maria Klok Jørgensen
-    Subsection 1.1 - Matej Majtan & Andrei Redis
+    Subsection 1.1 - Matej Majtan, Andrei Redis & Kristine Maria Klok Jørgensen
     Subsection 1.2 - Matej Majtan
     Subsection 1.3 - Andrei Redis
     Subsection 2.1 - Kristine Maria Klok Jørgensen
